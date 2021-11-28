@@ -34,6 +34,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.IndicativeSentencesGeneration;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
@@ -363,6 +364,7 @@ public class FregePluginFunctionalTest {
     @IndicativeSentencesGeneration(separator = " -> ", generator = DisplayNameGenerator.ReplaceUnderscores.class)
     class Repl_frege_task_works {
         @Test
+        @Tag("debug")
         void given_minimal_build_file_config() throws Exception {
             Files.createDirectories(testProjectDir.toPath().resolve(Paths.get("src", "main", "frege")));
             String minimalBuildFileConfig = createFregeSection(
