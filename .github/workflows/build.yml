@@ -35,9 +35,8 @@ jobs:
         shell: bash
 
       - name: Upload Unit Test Results
-        if: always()
+        if: always() && runner.os == 'Windows'
         uses: actions/upload-artifact@v2
         with:
           name: jvm-dump.txt
-          path: frege-gradle-plugin/**/javacore*.txt
-          if: runner.os == 'Windows'
+          path: ./**/javacore*.txt
