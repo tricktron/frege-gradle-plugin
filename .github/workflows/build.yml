@@ -28,8 +28,16 @@ jobs:
       - name: Run Unit & Functional Tests
         run: |
           if [ "$RUNNER_OS" = "Windows" ]; then
-            ./gradlew.bat clean check
+            ./gradlew.bat clean check --info
           else
             ./gradlew clean check
           fi
         shell: bash
+
+      - name: Upload Unit Test Results
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: jvm-dump.txt
+          path: frege-gradle-plugin/**/javacore*.txt
+          if: runner.os == 'Windows'
