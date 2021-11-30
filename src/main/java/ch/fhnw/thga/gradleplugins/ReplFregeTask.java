@@ -1,5 +1,8 @@
 package ch.fhnw.thga.gradleplugins;
 
+import java.io.InputStream;
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.gradle.api.DefaultTask;
@@ -49,6 +52,7 @@ public abstract class ReplFregeTask extends DefaultTask {
     @TaskAction
     public void startFregeRepl() {
         javaExec.setStandardInput(System.in);
+        javaExec.setJvmArgs(List.of("-Dfile.encoding=UTF-8"));
         javaExec.getMainClass().set(REPL_MAIN_CLASS);
         javaExec.setClasspath(getClasspath().get()).exec();
     }
