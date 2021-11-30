@@ -372,6 +372,7 @@ public class FregePluginFunctionalTest {
             appendToFile(buildFile, minimalBuildFileConfig);
 
             BuildResult result = runGradleTask(REPL_FREGE_TASK_NAME);
+            System.out.println(result.getOutput());
             assertTrue(project.getTasks().getByName(REPL_FREGE_TASK_NAME) instanceof ReplFregeTask);
             assertEquals(SUCCESS, result.task(":" + REPL_FREGE_TASK_NAME).getOutcome());
         }

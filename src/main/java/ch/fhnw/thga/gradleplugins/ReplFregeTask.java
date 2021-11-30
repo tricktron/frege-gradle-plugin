@@ -56,6 +56,7 @@ public abstract class ReplFregeTask extends DefaultTask {
         javaExec.setStandardInput(System.in);
         javaExec.setAllJvmArgs(List.of("-Dinput.encoding=utf-8", "-Dfile.encoding=utf-8", "-Dconsole.encoding=utf-8", "-Dterminal.encoding=utf-8"));
         javaExec.getMainClass().set(REPL_MAIN_CLASS);
+        System.out.println(javaExec.getAllJvmArgs());
         javaExec.setClasspath(getClasspath().get()).exec();
     }
 }
