@@ -17,6 +17,7 @@ import org.gradle.api.tasks.InputFile;
 import org.gradle.api.tasks.Internal;
 import org.gradle.api.tasks.JavaExec;
 import org.gradle.api.tasks.TaskAction;
+import org.gradle.api.tasks.options.Option;
 
 public abstract class ReplFregeTask extends DefaultTask {
     public static final Logger LOGGER = Logging.getLogger(SetupFregeTask.class);
@@ -34,6 +35,10 @@ public abstract class ReplFregeTask extends DefaultTask {
     @Input
     public abstract Property<String> getFregeDependencies();
 
+    @Input
+    @Option(option = "terminalType", description = "The jline terminal type, see https://github.com/jline/jline2/wiki/Terminal-Factory-Configuration")
+    public abstract Property<String> getTerminalType();
+
     @Internal
     public final Provider<FileCollection> getClasspath() {
         return getFregeDependencies().map(depsClasspath -> {
@@ -50,7 +55,8 @@ public abstract class ReplFregeTask extends DefaultTask {
     @TaskAction
     public void startFregeRepl() {
         javaExec.setStandardInput(System.in);
-        javaExec.systemProperty(JLINE_TERMINAL_TYPE_PROPERTY, "none");
+        javaExec.systemProperty(JLINE_TERMINAL_TYPE_PROPERTY, getTerminalType().get());
+        javaExec.systemProperty("jline.internal.Log.debug", "true");
         javaExec.getMainClass().set(REPL_MAIN_CLASS);
         javaExec.setClasspath(getClasspath().get()).exec();
     }
