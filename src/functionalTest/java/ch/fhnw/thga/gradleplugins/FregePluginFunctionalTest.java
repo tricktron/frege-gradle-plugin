@@ -34,6 +34,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.IndicativeSentencesGeneration;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
@@ -362,16 +363,19 @@ public class FregePluginFunctionalTest {
     @TestInstance(Lifecycle.PER_CLASS)
     @IndicativeSentencesGeneration(separator = " -> ", generator = DisplayNameGenerator.ReplaceUnderscores.class)
     class Repl_frege_task_works {
-        @Test
+            @Test
+        @Tag("debug")
         void given_minimal_build_file_config() throws Exception {
-            Files.createDirectories(testProjectDir.toPath().resolve(Paths.get("src", "main", "frege")));
             String minimalBuildFileConfig = createFregeSection(
                     fregeBuilder.version("'3.25.84'").release("'3.25alpha'").build());
             appendToFile(buildFile, minimalBuildFileConfig);
 
-            BuildResult result = runGradleTask(REPL_FREGE_TASK_NAME);
+            BuildResult result = runGradleTask(REPL_FREGE_TASK_NAME, "-q");
             assertTrue(project.getTasks().getByName(REPL_FREGE_TASK_NAME) instanceof ReplFregeTask);
             assertEquals(SUCCESS, result.task(":" + REPL_FREGE_TASK_NAME).getOutcome());
+            Path expectedFregeJarPath = testProjectDir.toPath()
+                            .resolve(Paths.get(DEFAULT_DOWNLOAD_DIRECTORY, "frege3.25.84.jar")).toAbsolutePath();
+            assertTrue(result.getOutput().contains(expectedFregeJarPath.toString()));
         }
     }
 }
