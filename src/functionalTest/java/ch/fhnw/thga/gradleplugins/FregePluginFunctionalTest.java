@@ -404,10 +404,7 @@ public class FregePluginFunctionalTest {
                         BuildResult result = runGradleTask(REPL_FREGE_TASK_NAME, "-q");
                         assertTrue(project.getTasks().getByName(REPL_FREGE_TASK_NAME) instanceof ReplFregeTask);
                         assertEquals(SUCCESS, result.task(":" + REPL_FREGE_TASK_NAME).getOutcome());
-                        Path expectedFregeJarPath = testProjectDir.toPath()
-                                        .resolve(Paths.get(DEFAULT_DOWNLOAD_DIRECTORY, "frege3.25.84.jar"))
-                                        .toAbsolutePath();
-                        assertTrue(result.getOutput().contains(expectedFregeJarPath.toString()));
+                        assertTrue(result.getOutput().contains("frege3.25.84.jar"));
                 }
 
                 @Test
@@ -421,7 +418,7 @@ public class FregePluginFunctionalTest {
                         BuildResult result = runGradleTask(REPL_FREGE_TASK_NAME, "-q");
                         assertTrue(project.getTasks().getByName(REPL_FREGE_TASK_NAME) instanceof ReplFregeTask);
                         assertEquals(SUCCESS, result.task(":" + REPL_FREGE_TASK_NAME).getOutcome());
-                        System.out.println(result.getOutput());
+                        assertTrue(result.getOutput().contains("frege3.25.84.jar"));
                         assertTrue(result.getOutput().contains("org.json"));
                 }
         }
