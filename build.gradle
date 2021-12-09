@@ -40,9 +40,7 @@ tasks.register('functionalTest', Test) {
 check.dependsOn functionalTest
 
 tasks.withType(Test).configureEach {
-    useJUnitPlatform {
-        includeTags 'debug'
-    }
+    useJUnitPlatform()
 }
 
 dependencies {
