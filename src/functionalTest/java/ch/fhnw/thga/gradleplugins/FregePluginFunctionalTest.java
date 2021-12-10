@@ -4,9 +4,10 @@ import static ch.fhnw.thga.gradleplugins.FregeExtension.DEFAULT_DOWNLOAD_DIRECTO
 import static ch.fhnw.thga.gradleplugins.FregePlugin.COMPILE_FREGE_TASK_NAME;
 import static ch.fhnw.thga.gradleplugins.FregePlugin.FREGE_EXTENSION_NAME;
 import static ch.fhnw.thga.gradleplugins.FregePlugin.FREGE_PLUGIN_ID;
-import static ch.fhnw.thga.gradleplugins.FregePlugin.REPL_FREGE_TASK_NAME;
+import static ch.fhnw.thga.gradleplugins.FregePlugin.DEPS_FREGE_TASK_NAME;
 import static ch.fhnw.thga.gradleplugins.FregePlugin.RUN_FREGE_TASK_NAME;
 import static ch.fhnw.thga.gradleplugins.FregePlugin.SETUP_FREGE_TASK_NAME;
+import static ch.fhnw.thga.gradleplugins.FregePlugin.REPL_FREGE_TASK_NAME;
 import static ch.fhnw.thga.gradleplugins.GradleBuildFileConversionTest.createPluginsSection;
 import static org.gradle.testkit.runner.TaskOutcome.FAILED;
 import static org.gradle.testkit.runner.TaskOutcome.FROM_CACHE;
@@ -38,6 +39,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.io.TempDir;
+
+import ch.fhnw.thga.gradleplugins.internal.DependencyFregeTask;
 
 @TestInstance(Lifecycle.PER_CLASS)
 public class FregePluginFunctionalTest {
@@ -394,16 +397,16 @@ public class FregePluginFunctionalTest {
         @Nested
         @TestInstance(Lifecycle.PER_CLASS)
         @IndicativeSentencesGeneration(separator = " -> ", generator = DisplayNameGenerator.ReplaceUnderscores.class)
-        class Repl_frege_task_works {
+        class Deps_frege_task_works {
                 @Test
                 void given_minimal_build_file_config() throws Exception {
                         String minimalBuildFileConfig = createFregeSection(
                                         fregeBuilder.version("'3.25.84'").release("'3.25alpha'").build());
                         appendToFile(buildFile, minimalBuildFileConfig);
 
-                        BuildResult result = runGradleTask(REPL_FREGE_TASK_NAME, "-q");
-                        assertTrue(project.getTasks().getByName(REPL_FREGE_TASK_NAME) instanceof ReplFregeTask);
-                        assertEquals(SUCCESS, result.task(":" + REPL_FREGE_TASK_NAME).getOutcome());
+                        BuildResult result = runGradleTask(DEPS_FREGE_TASK_NAME, "-q");
+                        assertTrue(project.getTasks().getByName(DEPS_FREGE_TASK_NAME) instanceof DependencyFregeTask);
+                        assertEquals(SUCCESS, result.task(":" + DEPS_FREGE_TASK_NAME).getOutcome());
                         assertTrue(result.getOutput().contains("frege3.25.84.jar"));
                 }
 
@@ -415,11 +418,29 @@ public class FregePluginFunctionalTest {
                         appendToFile(buildFile, String.join("\n", "repositories {", "mavenCentral()", "}"));
                         appendToFile(buildFile, String.join("\n", "dependencies {",
                                         "implementation group: 'org.json', name: 'json', version: '20211205'", "}"));
+                        BuildResult result = runGradleTask(DEPS_FREGE_TASK_NAME, "-q");
+                        assertTrue(project.getTasks().getByName(DEPS_FREGE_TASK_NAME) instanceof DependencyFregeTask);
+                        assertEquals(SUCCESS, result.task(":" + DEPS_FREGE_TASK_NAME).getOutcome());
+                        assertTrue(result.getOutput().contains("frege3.25.84.jar"));
+                        assertTrue(result.getOutput().contains("org.json"));
+                }
+        }
+
+        @Nested
+        @TestInstance(Lifecycle.PER_CLASS)
+        @IndicativeSentencesGeneration(separator = " -> ", generator = DisplayNameGenerator.ReplaceUnderscores.class)
+        class Repl_frege_task_works {
+                @Test
+                void given_minimal_build_file_config() throws Exception {
+                        String minimalBuildFileConfig = createFregeSection(
+                                        fregeBuilder.version("'3.25.84'").release("'3.25alpha'").build());
+                        appendToFile(buildFile, minimalBuildFileConfig);
+
                         BuildResult result = runGradleTask(REPL_FREGE_TASK_NAME, "-q");
                         assertTrue(project.getTasks().getByName(REPL_FREGE_TASK_NAME) instanceof ReplFregeTask);
                         assertEquals(SUCCESS, result.task(":" + REPL_FREGE_TASK_NAME).getOutcome());
+                        assertTrue(result.getOutput().contains("java -cp"));
                         assertTrue(result.getOutput().contains("frege3.25.84.jar"));
-                        assertTrue(result.getOutput().contains("org.json"));
                 }
         }
 }
