@@ -35,11 +35,11 @@ Optional configuration parameters inside `build.gradle`:
 - **setupFrege**: Downloads the specified version of the Frege compiler.
 - **compileFrege**: All your `*.fr` files in `mainSourceDir` get compiled to `outputDir`.
 - **runFrege**: Runs the Frege module specified by `mainModule`. Alternatively you can also pass the main module by command line, e.g: `gradle runFrege --mainModule=my.mod.Name`.
-- **replFrege**: Starts the Frege REPL with the Frege compiler, `outputDir` and specified `dependencies` on the classpath.
+- **replFrege**: Takes care of all project dependencies and prints the command to start the Frege REPL, e.g: `java -cp <your-correct-classpath-with-all-dependencies> frege.repl.FregeRepl`.
 
-### Compile Dependencies
+### Dependencies
 
-Compile dependencies can be configured as expected in your `build.gradle` file, using the `implementation` scope, e.g.:
+Dependencies can be configured as expected in your `build.gradle` file, using the `implementation` scope, e.g.:
 
 ```groovy
 repositories {
