@@ -41,6 +41,7 @@ check.dependsOn functionalTest
 
 tasks.withType(Test).configureEach {
     useJUnitPlatform()
+    maxParallelForks 6
 }
 
 dependencies {
