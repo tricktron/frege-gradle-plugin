@@ -4,17 +4,14 @@ import javax.inject.Inject;
 
 import org.gradle.api.DefaultTask;
 import org.gradle.api.file.DirectoryProperty;
-import org.gradle.api.file.FileCollection;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.logging.Logger;
 import org.gradle.api.logging.Logging;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.Property;
-import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputDirectory;
 import org.gradle.api.tasks.InputFile;
-import org.gradle.api.tasks.Internal;
 import org.gradle.api.tasks.JavaExec;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.api.tasks.options.Option;
@@ -30,19 +27,12 @@ public abstract class RunFregeTask extends DefaultTask {
     public abstract DirectoryProperty getFregeOutputDir();
 
     @Input
-    @Option(option = "mainModule", description = "The full name of the Frege module with a main function, e.g. 'my.mod.Name'")
+    @Option(option = "mainModule",
+           description = "The full name of the Frege module with a main function, e.g. 'my.mod.Name'")
     public abstract Property<String> getMainModule();
 
     @Input
     public abstract Property<String> getFregeDependencies();
-
-    @Internal
-    public final Provider<FileCollection> getClasspath() {
-        return getFregeDependencies().map(depsClasspath -> {
-            return depsClasspath.isEmpty() ? getProject().files(getFregeCompilerJar(), getFregeOutputDir())
-                    : getProject().files(getFregeCompilerJar(), getFregeOutputDir(), depsClasspath);
-        });
-    }
 
     @Inject
     public RunFregeTask(ObjectFactory objectFactory) {
@@ -52,6 +42,12 @@ public abstract class RunFregeTask extends DefaultTask {
     @TaskAction
     public void runFrege() {
         javaExec.getMainClass().set(getMainModule());
-        javaExec.setClasspath(getClasspath().get()).exec();
+        javaExec.setClasspath(
+            SharedTaskLogic.setupClasspath(
+                getProject(),
+                getFregeDependencies(),
+                getFregeCompilerJar(),
+                getFregeOutputDir())
+        .get()).exec();
     }
 }

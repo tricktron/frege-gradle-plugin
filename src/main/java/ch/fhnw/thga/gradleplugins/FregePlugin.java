@@ -3,15 +3,12 @@ package ch.fhnw.thga.gradleplugins;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
-import org.gradle.api.file.FileCollection;
-import org.gradle.api.file.RegularFile;
-import org.gradle.api.file.SourceDirectorySet;
-import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.TaskProvider;
 
 import ch.fhnw.thga.gradleplugins.internal.DependencyFregeTask;
 
-public class FregePlugin implements Plugin<Project> {
+public class FregePlugin implements Plugin<Project>
+{
     public static final String SETUP_FREGE_TASK_NAME      = "setupFrege";
     public static final String COMPILE_FREGE_TASK_NAME    = "compileFrege";
     public static final String RUN_FREGE_TASK_NAME        = "runFrege";
@@ -21,57 +18,78 @@ public class FregePlugin implements Plugin<Project> {
     public static final String FREGE_EXTENSION_NAME       = "frege";
     public static final String FREGE_IMPLEMENTATION_SCOPE = "implementation";
 
-    private FileCollection setupClasspath(Project project, Configuration dependencies,
-            Provider<RegularFile> fregeCompilerJar) {
-        if (dependencies.isEmpty()) {
-            return project.files(fregeCompilerJar);
-        } else {
-            return project.files(fregeCompilerJar, dependencies.getAsPath());
-        }
-    }
-
     @Override
     public void apply(Project project) {
         Configuration implementation = project.getConfigurations().create(FREGE_IMPLEMENTATION_SCOPE);
-        FregeExtension extension     = project.getExtensions().create(FREGE_EXTENSION_NAME, FregeExtension.class);
+        FregeExtension extension     = project.getExtensions().create(
+                                       FREGE_EXTENSION_NAME,
+                                       FregeExtension.class);
 
-        TaskProvider<SetupFregeTask> setupFregeCompilerTask = project.getTasks().register(SETUP_FREGE_TASK_NAME,
-                SetupFregeTask.class, task -> {
+        TaskProvider<SetupFregeTask> setupFregeCompilerTask =
+            project.getTasks().register(
+                SETUP_FREGE_TASK_NAME,
+                SetupFregeTask.class,
+                task ->
+                {
                     task.getVersion().set(extension.getVersion());
                     task.getRelease().set(extension.getRelease());
                     task.getDownloadDir().set(extension.getCompilerDownloadDir());
                 });
 
-        TaskProvider<CompileFregeTask> compileFregeTask = project.getTasks().register(COMPILE_FREGE_TASK_NAME,
-                CompileFregeTask.class, task -> {
+        TaskProvider<CompileFregeTask> compileFregeTask     =
+            project.getTasks().register(
+                COMPILE_FREGE_TASK_NAME,
+                CompileFregeTask.class,
+                task ->
+                {
                     task.dependsOn(setupFregeCompilerTask);
-                    task.getFregeCompilerJar().set(setupFregeCompilerTask.get().getFregeCompilerOutputPath());
+                    task.getFregeCompilerJar().set(
+                        setupFregeCompilerTask.get().getFregeCompilerOutputPath());
                     task.getFregeMainSourceDir().set(extension.getMainSourceDir());
                     task.getFregeOutputDir().set(extension.getOutputDir());
                     task.getFregeCompilerFlags().set(extension.getCompilerFlags());
                     task.getFregeDependencies().set(implementation.getAsPath());
-                });
+                }
+            );
 
-        project.getTasks().register(RUN_FREGE_TASK_NAME, RunFregeTask.class, task -> {
-            task.dependsOn(compileFregeTask);
-            task.getFregeCompilerJar().set(setupFregeCompilerTask.get().getFregeCompilerOutputPath());
-            task.getFregeOutputDir().set(extension.getOutputDir());
-            task.getMainModule().set(extension.getMainModule());
-            task.getFregeDependencies().set(implementation.getAsPath());
-        });
+        project.getTasks().register(
+            RUN_FREGE_TASK_NAME,
+            RunFregeTask.class,
+            task ->
+            {
+                task.dependsOn(compileFregeTask);
+                task.getFregeCompilerJar().set(
+                    setupFregeCompilerTask.get().getFregeCompilerOutputPath());
+                task.getFregeOutputDir().set(extension.getOutputDir());
+                task.getMainModule().set(extension.getMainModule());
+                task.getFregeDependencies().set(implementation.getAsPath());
+            }
+        );
 
-        project.getTasks().register(DEPS_FREGE_TASK_NAME,
-                DependencyFregeTask.class, task -> {
-                    task.dependsOn(compileFregeTask);
-                    task.getClasspath().setFrom(setupClasspath(project, implementation,
-                            setupFregeCompilerTask.get().getFregeCompilerOutputPath()), extension.getOutputDir().get());
-                });
+        project.getTasks().register(
+            DEPS_FREGE_TASK_NAME,
+            DependencyFregeTask.class,
+            task ->
+            {
+                task.dependsOn(compileFregeTask);
+                task.getFregeCompilerJar().set(
+                    setupFregeCompilerTask.get().getFregeCompilerOutputPath());
+                task.getFregeOutputDir().set(extension.getOutputDir());
+                task.getFregeDependencies().set(implementation.getAsPath());
+            }
+        );
 
-        project.getTasks().register(REPL_FREGE_TASK_NAME, ReplFregeTask.class, task -> {
-            task.dependsOn(compileFregeTask);
-            task.getFregeClasspath()
-                .setFrom(setupClasspath(project, implementation, setupFregeCompilerTask.get().getFregeCompilerOutputPath())
-                , extension.getOutputDir().get());
-        });
+        project.getTasks().register(
+            REPL_FREGE_TASK_NAME,
+            ReplFregeTask.class,
+            task ->
+            {
+                task.dependsOn(compileFregeTask);
+                task.getFregeCompilerJar().set(
+                    setupFregeCompilerTask.get().getFregeCompilerOutputPath());
+                task.getFregeOutputDir().set(extension.getOutputDir());
+                task.getFregeDependencies().set(implementation.getAsPath());
+            }
+        );
     }
 }
