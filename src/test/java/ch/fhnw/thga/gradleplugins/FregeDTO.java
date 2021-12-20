@@ -14,9 +14,17 @@ public class FregeDTO {
     public final String outputDir;
     public final String mainModule;
     public final String compilerFlags;
+    public final String replModule;
 
-    public FregeDTO(String version, String release, String compilerDownloadDir, String mainSourceDir,
-            String outputDir, String mainModule, String compilerFlags) {
+    public FregeDTO(
+        String version,
+        String release,
+        String compilerDownloadDir,
+        String mainSourceDir,
+        String outputDir,
+        String mainModule,
+        String compilerFlags,
+        String replModule) {
         this.version = version;
         this.release = release;
         this.compilerDownloadDir = compilerDownloadDir;
@@ -24,6 +32,7 @@ public class FregeDTO {
         this.outputDir = outputDir;
         this.mainModule = mainModule;
         this.compilerFlags = compilerFlags;
+        this.replModule = replModule;
     }
 
     public String getVersion() {
@@ -54,6 +63,10 @@ public class FregeDTO {
         return compilerFlags;
     }
 
+    public String getReplModule() {
+        return replModule;
+    }
+
     private String getFieldValue(Field field) {
         try {
             return field.get(this).toString();
@@ -67,7 +80,9 @@ public class FregeDTO {
             return FregeDTO.class.getField(fieldName);
         } catch (NoSuchFieldException e) {
             throw new RuntimeException(
-                    String.format("Field %s not found in class %s", e.getMessage(), FregeDTO.class.getName()),
+                    String.format(
+                        "Field %s not found in class %s",
+                        e.getMessage(), FregeDTO.class.getName()),
                     e.getCause());
         }
     }
@@ -81,7 +96,8 @@ public class FregeDTO {
     }
 
     private boolean isGetterProperty(Method method) {
-        return method.getName().startsWith("get") && method.getReturnType().getName().contains("Property");
+        return method.getName().startsWith("get") &&
+               method.getReturnType().getName().contains("Property");
     }
 
     private String stripGetPrefixAndDecapitalize(String s) {
@@ -89,9 +105,14 @@ public class FregeDTO {
     }
 
     public String toBuildFile() {
-        Stream<Method> methods = Arrays.stream(FregeExtension.class.getMethods());
-        Stream<Field> fields = methods.filter(m -> isGetterProperty(m))
-                .map(m -> stripGetPrefixAndDecapitalize(m.getName())).map(name -> getField(name));
-        return fields.filter(f -> !isEmpty(f)).map(f -> toKeyValuePairs(f)).collect(Collectors.joining("\n  "));
+        Stream<Field> fields =
+            Arrays.stream(FregeExtension.class.getMethods())
+            .filter(m -> isGetterProperty(m))
+            .map(m -> stripGetPrefixAndDecapitalize(m.getName()))
+            .map(name -> getField(name));
+        return fields
+               .filter(f -> !isEmpty(f))
+               .map(f -> toKeyValuePairs(f))
+               .collect(Collectors.joining("\n  "));
     }
 }

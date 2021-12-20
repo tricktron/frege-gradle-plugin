@@ -3,13 +3,16 @@ package ch.fhnw.thga.gradleplugins;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
 import org.gradle.api.DefaultTask;
+import org.gradle.api.file.Directory;
 import org.gradle.api.file.DirectoryProperty;
+import org.gradle.api.file.FileTree;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.ListProperty;
@@ -29,6 +32,22 @@ import org.gradle.api.tasks.TaskAction;
 @CacheableTask
 public abstract class CompileFregeTask extends DefaultTask {
     private final JavaExec javaExec;
+    private static final BiFunction<String, Directory, FileTree> excludeReplSourceFile =
+        (String replSource,
+        Directory srcDir) ->
+    {
+        if (replSource.isEmpty()) return srcDir.getAsFileTree();
+        return srcDir.getAsFileTree().matching(
+            pattern ->
+            {
+                pattern.exclude(
+                    String.format(
+                    "**/%s",
+                    replSource)
+                );
+            }
+        );
+    };
 
     @InputFile
     @PathSensitive(PathSensitivity.RELATIVE)
@@ -44,6 +63,9 @@ public abstract class CompileFregeTask extends DefaultTask {
     @Input
     public abstract Property<String> getFregeDependencies();
 
+    @Input
+    public abstract Property<String> getReplSource();
+
     @OutputDirectory
     public abstract DirectoryProperty getFregeOutputDir();
 
@@ -58,9 +80,26 @@ public abstract class CompileFregeTask extends DefaultTask {
     }
 
     @Internal
+    public final Provider<FileTree> getSourceFileTree() {
+        return getReplSource().zip(
+            getFregeMainSourceDir(),
+            excludeReplSourceFile);
+    }
+
+    @Internal
+    public final Provider<List<String>> getSourceFiles() {
+        return getSourceFileTree()
+            .map(tree -> tree.getFiles().stream()
+            .map(file -> file.getAbsolutePath())
+            .collect(Collectors.toList())
+        );
+    }
+
+    @Internal
     public final Provider<List<String>> getDependencyArg() {
         return getFregeDependencies().map(depsClasspath -> {
-            return depsClasspath.isEmpty() ? Collections.emptyList() : List.of("-fp", depsClasspath);
+            return depsClasspath.isEmpty() ? Collections.emptyList()
+                                           : List.of("-fp", depsClasspath);
         });
     }
 
@@ -69,16 +108,25 @@ public abstract class CompileFregeTask extends DefaultTask {
         javaExec = objectFactory.newInstance(JavaExec.class);
     }
 
-    private List<String> buildCompilerArgsFromProperties(List<String> directoryArg) {
-        return Stream
-                .of(getDependencyArg().get(), getFregeCompilerFlags().get(), directoryArg, getSourcePathArg().get(),
-                        List.of(getFregeMainSourcePath().get()))
-                .filter(lists -> !lists.isEmpty()).flatMap(Collection::stream).collect(Collectors.toList());
+    private List<String> buildCompilerArgsFromProperties(List<String> directoryArg)
+    {
+        return Stream.of(
+            getDependencyArg().get(),
+            getFregeCompilerFlags().get(),
+            directoryArg,
+            getSourcePathArg().get(),
+            getSourceFiles().get())
+        .filter(lists -> !lists.isEmpty())
+        .flatMap(Collection::stream)
+        .collect(Collectors.toList());
     }
 
     @TaskAction
     public void compileFrege() {
-        List<String> directoryArg = List.of("-d", getFregeOutputDir().getAsFile().get().getAbsolutePath());
+        List<String> directoryArg = List.of(
+            "-d",
+            getFregeOutputDir().getAsFile().get().getAbsolutePath());
+
         javaExec.setClasspath(getProject().files(getFregeCompilerJar()))
                 .setArgs(buildCompilerArgsFromProperties(directoryArg)).exec();
     }

@@ -20,8 +20,13 @@ public class FregePlugin implements Plugin<Project>
 
     @Override
     public void apply(Project project) {
-        Configuration implementation = project.getConfigurations().create(FREGE_IMPLEMENTATION_SCOPE);
-        FregeExtension extension     = project.getExtensions().create(
+        Configuration implementation = project
+                                       .getConfigurations()
+                                       .create(FREGE_IMPLEMENTATION_SCOPE);
+
+        FregeExtension extension     = project
+                                       .getExtensions()
+                                       .create(
                                        FREGE_EXTENSION_NAME,
                                        FregeExtension.class);
 
@@ -36,7 +41,7 @@ public class FregePlugin implements Plugin<Project>
                     task.getDownloadDir().set(extension.getCompilerDownloadDir());
                 });
 
-        TaskProvider<CompileFregeTask> compileFregeTask     =
+        TaskProvider<CompileFregeTask> compileFregeTask =
             project.getTasks().register(
                 COMPILE_FREGE_TASK_NAME,
                 CompileFregeTask.class,
@@ -49,6 +54,7 @@ public class FregePlugin implements Plugin<Project>
                     task.getFregeOutputDir().set(extension.getOutputDir());
                     task.getFregeCompilerFlags().set(extension.getCompilerFlags());
                     task.getFregeDependencies().set(implementation.getAsPath());
+                    task.getReplSource().set("");
                 }
             );
 
@@ -71,6 +77,13 @@ public class FregePlugin implements Plugin<Project>
             DependencyFregeTask.class,
             task ->
             {
+                task.dependsOn(compileFregeTask.map(
+                    compileTask ->
+                    {
+                        compileTask.getReplSource().set(task.getReplSource());
+                        return compileTask;
+                    })
+                .get());
                 task.dependsOn(compileFregeTask);
                 task.getFregeCompilerJar().set(
                     setupFregeCompilerTask.get().getFregeCompilerOutputPath());
@@ -84,7 +97,14 @@ public class FregePlugin implements Plugin<Project>
             ReplFregeTask.class,
             task ->
             {
-                task.dependsOn(compileFregeTask);
+                task.getReplSource().set(extension.getReplModule());
+                task.dependsOn(compileFregeTask.map(
+                    compileTask ->
+                    {
+                        compileTask.getReplSource().set(task.getReplSource());
+                        return compileTask;
+                    })
+                .get());
                 task.getFregeCompilerJar().set(
                     setupFregeCompilerTask.get().getFregeCompilerOutputPath());
                 task.getFregeOutputDir().set(extension.getOutputDir());
