@@ -400,9 +400,10 @@ public class FregePluginFunctionalTest {
         class Deps_frege_task_works {
                 @Test
                 void given_minimal_build_file_config() throws Exception {
+                        String completionFr = "Completion.fr";
                         String minimalBuildFileConfig = createFregeSection(
                                         fregeBuilder.version("'3.25.84'").release("'3.25alpha'").build());
-                        appendToFile(buildFile, minimalBuildFileConfig);
+                        setupDefaultFregeProjectStructure(SIMPLE_FREGE_CODE, completionFr, minimalBuildFileConfig);
 
                         BuildResult result = runGradleTask(DEPS_FREGE_TASK_NAME, "-q");
                         assertTrue(project.getTasks().getByName(DEPS_FREGE_TASK_NAME) instanceof DependencyFregeTask);
@@ -414,10 +415,12 @@ public class FregePluginFunctionalTest {
                 void given_build_file_config_with_dependencies() throws Exception {
                         String minimalBuildFileConfig = createFregeSection(
                                         fregeBuilder.version("'3.25.84'").release("'3.25alpha'").build());
-                        appendToFile(buildFile, minimalBuildFileConfig);
+                        String completionFr = "Completion.fr";
+                        setupDefaultFregeProjectStructure(SIMPLE_FREGE_CODE, completionFr, minimalBuildFileConfig);
                         appendToFile(buildFile, String.join("\n", "repositories {", "mavenCentral()", "}"));
                         appendToFile(buildFile, String.join("\n", "dependencies {",
                                         "implementation group: 'org.json', name: 'json', version: '20211205'", "}"));
+
                         BuildResult result = runGradleTask(DEPS_FREGE_TASK_NAME, "-q");
                         assertTrue(project.getTasks().getByName(DEPS_FREGE_TASK_NAME) instanceof DependencyFregeTask);
                         assertEquals(SUCCESS, result.task(":" + DEPS_FREGE_TASK_NAME).getOutcome());
@@ -432,9 +435,10 @@ public class FregePluginFunctionalTest {
         class Repl_frege_task_works {
                 @Test
                 void given_minimal_build_file_config() throws Exception {
+                        String completionFr = "Completion.fr";
                         String minimalBuildFileConfig = createFregeSection(
                                         fregeBuilder.version("'3.25.84'").release("'3.25alpha'").build());
-                        appendToFile(buildFile, minimalBuildFileConfig);
+                        setupDefaultFregeProjectStructure(SIMPLE_FREGE_CODE, completionFr, minimalBuildFileConfig);
 
                         BuildResult result = runGradleTask(REPL_FREGE_TASK_NAME, "-q");
                         assertTrue(project.getTasks().getByName(REPL_FREGE_TASK_NAME) instanceof ReplFregeTask);
