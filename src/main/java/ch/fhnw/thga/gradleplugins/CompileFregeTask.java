@@ -32,7 +32,9 @@ import org.gradle.api.tasks.TaskAction;
 @CacheableTask
 public abstract class CompileFregeTask extends DefaultTask {
     private final JavaExec javaExec;
-    private static final BiFunction<String, Directory, FileTree> excludeReplSourceFile =
+    private static final String FREGE_FILES_GLOB_PATTERN          = "**/*.fr";
+    private static final BiFunction<String, Directory, FileTree>
+                                            excludeReplSourceFile =
         (String replSource,
         Directory srcDir) ->
     {
@@ -89,6 +91,7 @@ public abstract class CompileFregeTask extends DefaultTask {
     @Internal
     public final Provider<List<String>> getSourceFiles() {
         return getSourceFileTree()
+            .map(tree -> tree.matching(pattern -> pattern.include(FREGE_FILES_GLOB_PATTERN)))
             .map(tree -> tree.getFiles().stream()
             .map(file -> file.getAbsolutePath())
             .collect(Collectors.toList())
