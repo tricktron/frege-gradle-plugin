@@ -500,7 +500,7 @@ public class FregePluginFunctionalTest {
                 fregeBuilder
                 .version("'3.25.84'")
                 .release("'3.25alpha'")
-                .replModule(String.format("'%s'", completionFr))
+                .replSource(String.format("'%s'", completionFr))
                 .build());
             setupDefaultFregeProjectStructure(
                 SIMPLE_FREGE_CODE,

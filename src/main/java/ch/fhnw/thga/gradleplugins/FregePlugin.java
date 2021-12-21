@@ -97,7 +97,7 @@ public class FregePlugin implements Plugin<Project>
             ReplFregeTask.class,
             task ->
             {
-                task.getReplSource().set(extension.getReplModule());
+                task.getReplSource().set(extension.getReplSource());
                 task.dependsOn(compileFregeTask.map(
                     compileTask ->
                     {

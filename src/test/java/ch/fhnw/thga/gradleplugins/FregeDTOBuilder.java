@@ -8,7 +8,7 @@ public final class FregeDTOBuilder implements Builder {
     private String outputDir = "";
     private String mainModule = "";
     private String compilerFlags = "";
-    private String replModule = "";
+    private String replSource = "";
 
     private static volatile FregeDTOBuilder instance;
 
@@ -74,9 +74,9 @@ public final class FregeDTOBuilder implements Builder {
     }
 
     @Override
-    public Builder replModule(String replModule)
+    public Builder replSource(String replSource)
     {
-        this.replModule = replModule;
+        this.replSource = replSource;
         return this;
     }
 
@@ -89,6 +89,6 @@ public final class FregeDTOBuilder implements Builder {
             outputDir,
             mainModule,
             compilerFlags,
-            replModule);
+            replSource);
     }
 }

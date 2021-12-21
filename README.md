@@ -12,13 +12,14 @@ git clone https://github.com/tricktron/frege-gradle-plugin.git
 ```
 
 ## How to Use
-1. Specify the frege compiler release, version and main module in your `build.gradle`:
+1. Specify the frege compiler release, version, main module and repl source file in your `build.gradle`:
 
 ```groovy
 frege {
     version = '3.25.84'
     release = '3.25alpha'
-    mainModule = 'my.mod.Name'
+    mainModule = 'my.mod.Name' // see runFrege task
+    replSource = 'Name.fr' // see replFrege task
 }
 ```
 
@@ -35,7 +36,7 @@ Optional configuration parameters inside `build.gradle`:
 - **setupFrege**: Downloads the specified version of the Frege compiler.
 - **compileFrege**: All your `*.fr` files in `mainSourceDir` get compiled to `outputDir`.
 - **runFrege**: Runs the Frege module specified by `mainModule`. Alternatively you can also pass the main module by command line, e.g: `gradle runFrege --mainModule=my.mod.Name`.
-- **replFrege**: Takes care of all project dependencies and prints the command to start the Frege REPL, e.g: `java -cp <your-correct-classpath-with-all-dependencies> frege.repl.FregeRepl`.
+- **replFrege**: Takes care of all project dependencies of the specified filename by `replSource` and prints the command to start the Frege REPL, e.g: `java -cp <your-correct-classpath-with-all-dependencies> frege.repl.FregeRepl`. Afterwards you can load your file into the repl with `:l <absolute path to replSource>`.
 
 ### Dependencies
 

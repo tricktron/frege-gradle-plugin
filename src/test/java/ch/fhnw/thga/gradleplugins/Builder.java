@@ -15,7 +15,7 @@ public interface Builder {
 
     Builder compilerFlags(String compilerFlags);
 
-    Builder replModule(String replModule);
+    Builder replSource(String replSource);
 
     FregeDTO build();
 }

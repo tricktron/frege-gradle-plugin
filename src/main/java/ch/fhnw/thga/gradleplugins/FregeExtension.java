@@ -29,7 +29,7 @@ public abstract class FregeExtension {
 
     public abstract ListProperty<String> getCompilerFlags();
 
-    public abstract Property<String> getReplModule();
+    public abstract Property<String> getReplSource();
 
     @Inject
     public FregeExtension(ProjectLayout projectLayout) {
