@@ -21,9 +21,10 @@ import org.gradle.api.tasks.OutputFile;
 import org.gradle.api.tasks.TaskAction;
 
 public abstract class SetupFregeTask extends DefaultTask {
-    public static final Logger LOGGER = Logging.getLogger(SetupFregeTask.class);
+    public static final Logger LOGGER                   = Logging.getLogger(SetupFregeTask.class);
 
-    private static final String FREGE_GITHUB_URL_PREFIX = "https://github.com/Frege/frege/releases/download";
+    private static final String FREGE_GITHUB_URL_PREFIX =
+                                               "https://github.com/Frege/frege/releases/download";
 
     @Input
     public abstract Property<String> getVersion();
