@@ -1,52 +1,71 @@
-plugins {
+plugins
+{
     id 'java-gradle-plugin'
     id 'maven-publish'
 }
 
-repositories {
+repositories
+{
     mavenCentral()
 }
 
-sourceSets {
-    functionalTest {
+dependencies
+{
+    def junit5Group   = 'org.junit.jupiter'
+    def junit5Version = '5.8.2'
+    testImplementation group: junit5Group, name: 'junit-jupiter-api', version: junit5Version
+    testRuntimeOnly group: junit5Group, name: 'junit-jupiter-engine', version: junit5Version
+}
+
+java
+{
+    toolchain
+    {
+        languageVersion = JavaLanguageVersion.of(11)
+    }
+}
+
+sourceSets
+{
+    functionalTest
+    {
         compileClasspath += sourceSets.main.output + sourceSets.test.output
         runtimeClasspath += sourceSets.test.runtimeClasspath
     }
 }
 
-gradlePlugin {
+gradlePlugin
+{
     testSourceSets project.sourceSets.functionalTest
-    plugins {
-        fregePlugin {
-            id = 'ch.fhnw.thga.frege'
+    plugins
+    {
+        fregePlugin
+        {
+            id                  = 'ch.fhnw.thga.frege'
             implementationClass = 'ch.fhnw.thga.gradleplugins.FregePlugin'
         }
     }
 }
 
-configurations {
+configurations
+{
     functionalTestImplementation.extendsFrom testImplementation
     functionalRuntimeOnly.extendsFrom runtimeOnly
 }
 
-tasks.register('functionalTest', Test) {
-    description = 'Runs functional tests.'
-    group = 'verification'
+tasks.register('functionalTest', Test)
+{
+    description     = 'Runs functional tests.'
+    group           = 'verification'
     testClassesDirs = sourceSets.functionalTest.output.classesDirs
-    classpath = sourceSets.functionalTest.runtimeClasspath
+    classpath       = sourceSets.functionalTest.runtimeClasspath
     shouldRunAfter test
 }
 
 check.dependsOn functionalTest
 
-tasks.withType(Test).configureEach {
+tasks.withType(Test).configureEach
+{
     useJUnitPlatform()
     maxParallelForks 6
-}
-
-dependencies {
-    def junit5Group = 'org.junit.jupiter'
-    def junit5Version = '5.8.1'
-    testImplementation group: junit5Group, name: 'junit-jupiter-api', version: junit5Version
-    testRuntimeOnly group: junit5Group, name: 'junit-jupiter-engine', version: junit5Version
 }
