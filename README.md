@@ -6,6 +6,8 @@ Simplifies setting up your Frege project.
 
 ## Installation
 
+You need `java >= 11`.
+
 ```bash
 git clone https://github.com/tricktron/frege-gradle-plugin.git
 ./gradlew publishToMavenLocal
