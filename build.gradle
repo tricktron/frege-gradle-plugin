@@ -12,7 +12,7 @@ repositories
 dependencies
 {
     def junit5Group   = 'org.junit.jupiter'
-    def junit5Version = '5.8.1'
+    def junit5Version = '5.8.2'
     testImplementation group: junit5Group, name: 'junit-jupiter-api', version: junit5Version
     testRuntimeOnly group: junit5Group, name: 'junit-jupiter-engine', version: junit5Version
 }
