@@ -3,16 +3,13 @@ package ch.fhnw.thga.gradleplugins;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
 import org.gradle.api.DefaultTask;
-import org.gradle.api.file.Directory;
 import org.gradle.api.file.DirectoryProperty;
-import org.gradle.api.file.FileTree;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.ListProperty;
@@ -31,25 +28,8 @@ import org.gradle.api.tasks.TaskAction;
 
 @CacheableTask
 public abstract class CompileFregeTask extends DefaultTask {
+    private static final String FREGE_FILES_GLOB_PATTERN = "**/*.fr";
     private final JavaExec javaExec;
-    private static final String FREGE_FILES_GLOB_PATTERN          = "**/*.fr";
-    private static final BiFunction<String, Directory, FileTree>
-                                            excludeReplSourceFile =
-        (String replSource,
-        Directory srcDir) ->
-    {
-        if (replSource.isEmpty()) return srcDir.getAsFileTree();
-        return srcDir.getAsFileTree().matching(
-            pattern ->
-            {
-                pattern.exclude(
-                    String.format(
-                    "**/%s",
-                    replSource)
-                );
-            }
-        );
-    };
 
     @InputFile
     @PathSensitive(PathSensitivity.RELATIVE)
@@ -66,7 +46,7 @@ public abstract class CompileFregeTask extends DefaultTask {
     public abstract Property<String> getFregeDependencies();
 
     @Input
-    public abstract Property<String> getReplSource();
+    public abstract Property<String> getFregeMainModuleName();
 
     @OutputDirectory
     public abstract DirectoryProperty getFregeOutputDir();
@@ -82,15 +62,19 @@ public abstract class CompileFregeTask extends DefaultTask {
     }
 
     @Internal
-    public final Provider<FileTree> getSourceFileTree() {
-        return getReplSource().zip(
-            getFregeMainSourceDir(),
-            excludeReplSourceFile);
+    public final Provider<List<String>> getCompileItems() {
+        return getFregeMainModuleName()
+            .map(name ->
+            {
+                return name.isEmpty() ? getFregeSourceFiles().get()
+                                      : List.of(name);
+            });
     }
 
     @Internal
-    public final Provider<List<String>> getSourceFiles() {
-        return getSourceFileTree()
+    public final Provider<List<String>> getFregeSourceFiles() {
+        return getFregeMainSourceDir()
+            .map(srcDir -> srcDir.getAsFileTree())
             .map(tree -> tree.matching(pattern -> pattern.include(FREGE_FILES_GLOB_PATTERN)))
             .map(tree -> tree.getFiles().stream()
             .map(file -> file.getAbsolutePath())
@@ -111,14 +95,14 @@ public abstract class CompileFregeTask extends DefaultTask {
         javaExec = objectFactory.newInstance(JavaExec.class);
     }
 
-    private List<String> buildCompilerArgsFromProperties(List<String> directoryArg)
+    private List<String> buildCompilerArgsFromProperties(List<String> targetDirectoryArg)
     {
         return Stream.of(
             getDependencyArg().get(),
             getFregeCompilerFlags().get(),
-            directoryArg,
+            targetDirectoryArg,
             getSourcePathArg().get(),
-            getSourceFiles().get())
+            getCompileItems().get())
         .filter(lists -> !lists.isEmpty())
         .flatMap(Collection::stream)
         .collect(Collectors.toList());
@@ -126,11 +110,11 @@ public abstract class CompileFregeTask extends DefaultTask {
 
     @TaskAction
     public void compileFrege() {
-        List<String> directoryArg = List.of(
+        List<String> targetDirectoryArg = List.of(
             "-d",
             getFregeOutputDir().getAsFile().get().getAbsolutePath());
 
         javaExec.setClasspath(getProject().files(getFregeCompilerJar()))
-                .setArgs(buildCompilerArgsFromProperties(directoryArg)).exec();
+                .setArgs(buildCompilerArgsFromProperties(targetDirectoryArg)).exec();
     }
 }

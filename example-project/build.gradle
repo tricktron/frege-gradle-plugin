@@ -1,0 +1,10 @@
+plugins {
+    id 'ch.fhnw.thga.frege' version '1.7.0-alpha'
+}
+
+frege {
+    version = '3.25.84'
+    release = '3.25alpha'
+    mainModule = 'ch.fhnw.thga.Test'
+    replSource = 'ch.fhnw.thga.Test'
+}

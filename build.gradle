@@ -13,8 +13,10 @@ dependencies
 {
     def junit5Group   = 'org.junit.jupiter'
     def junit5Version = '5.8.2'
-    testImplementation group: junit5Group, name: 'junit-jupiter-api', version: junit5Version
-    testRuntimeOnly group: junit5Group, name: 'junit-jupiter-engine', version: junit5Version
+    testImplementation group: junit5Group,          name: 'junit-jupiter-api',      version: junit5Version
+    testRuntimeOnly    group: junit5Group,          name: 'junit-jupiter-engine',   version: junit5Version
+    testRuntimeOnly    group: 'org.junit.platform', name: 'junit-platform-console', version: junit5Version
+    testImplementation(enforcedPlatform("org.junit:junit-bom:${junit5Version}"))
 }
 
 java
@@ -51,6 +53,16 @@ configurations
 {
     functionalTestImplementation.extendsFrom testImplementation
     functionalRuntimeOnly.extendsFrom runtimeOnly
+}
+
+tasks.register('consoleLauncher', JavaExec)
+{
+    dependsOn testClasses
+    def reportsDir = layout.buildDirectory.dir('test-results')
+    mainClass      = 'org.junit.platform.console.ConsoleLauncher'
+    outputs.dir reportsDir
+    classpath sourceSets.test.runtimeClasspath + sourceSets.functionalTest.runtimeClasspath
+    args '--scan-classpath', '--details', 'tree', '--reports-dir', reportsDir.get()
 }
 
 tasks.register('functionalTest', Test)
