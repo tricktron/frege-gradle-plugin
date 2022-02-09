@@ -44,7 +44,7 @@ import org.junit.jupiter.api.io.TempDir;
 public class FregePluginFunctionalTest
 {
     private static final String NEW_LINE                     = System.lineSeparator();
-    private static FregeDTOBuilder FREGE_BUILDER             = FregeDTOBuilder.getInstance();
+    private static FregeDTOBuilder FREGE_BUILDER             = FregeDTOBuilder.builder();
     private static final String FREGE_COMPLETION_MODULE_CODE = 
         String.join
         (
@@ -97,7 +97,7 @@ public class FregePluginFunctionalTest
     )
     class Compile_frege_task_works {
 
-        @Test
+        /*@Test
         void given_frege_code_in_default_source_dir_and_minimal_build_file_config(
             @TempDir File testProjectDir)
             throws Exception
@@ -141,7 +141,7 @@ public class FregePluginFunctionalTest
                 .exists());
         }
 
-        @Test
+            @Test
             void given_frege_code_and_many_compiler_flags(
                 @TempDir File testProjectDir
             ) throws Exception
@@ -189,7 +189,7 @@ public class FregePluginFunctionalTest
                     .exists());
             }
 
-            /*@Test
+            @Test
             void given_frege_code_in_custom_source_dir_and_custom_output_dir_and_minimal_build_file_config()
                             throws Exception {
                     Path customMainSourceDir = testProjectDir.toPath().resolve(Paths.get("src", "frege"));

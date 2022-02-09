@@ -10,20 +10,11 @@ public final class FregeDTOBuilder implements Builder {
     private String compilerFlags = "";
     private String replSource = "";
 
-    private static volatile FregeDTOBuilder instance;
+    private FregeDTOBuilder() {}
 
-    private FregeDTOBuilder() {
-    }
-
-    public static FregeDTOBuilder getInstance() {
-        FregeDTOBuilder result = instance;
-        if (result != null) {
-            return result;
-        } else {
-            synchronized (FregeDTOBuilder.class) {
-                return (instance == null) ? new FregeDTOBuilder() : instance;
-            }
-        }
+    public static FregeDTOBuilder builder()
+    {
+        return new FregeDTOBuilder();
     }
 
 

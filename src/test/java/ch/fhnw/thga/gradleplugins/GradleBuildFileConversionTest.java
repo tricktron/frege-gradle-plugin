@@ -33,7 +33,7 @@ public class GradleBuildFileConversionTest {
 
     @BeforeEach
     void setup() {
-        fregeBuilder = FregeDTOBuilder.getInstance();
+        fregeBuilder = FregeDTOBuilder.builder();
     }
 
     @Nested

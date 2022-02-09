@@ -4,9 +4,11 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import org.gradle.api.Project;
@@ -16,25 +18,30 @@ import ch.fhnw.thga.gradleplugins.FregeDTO;
 import static ch.fhnw.thga.gradleplugins.FregePlugin.FREGE_EXTENSION_NAME;
 import static ch.fhnw.thga.gradleplugins.FregePlugin.FREGE_PLUGIN_ID;
 import static ch.fhnw.thga.gradleplugins.GradleBuildFileConversionTest.createPluginsSection;
+import static ch.fhnw.thga.gradleplugins.FregeExtension.DEFAULT_RELATIVE_COMPILER_DOWNLOAD_DIR;
 
 public final class FregeProjectBuilder implements ProjectRoot, BuildFile, Build
 {
+    private static final String LATEST_COMPILER_VERSION = "3.25.84";
+    private static final Path LOCAL_COMPILER_PATH       =
+        Paths.get(String.format(
+            "src/functionalTest/resources/frege%s.jar",
+            LATEST_COMPILER_VERSION)
+        );
+
     private File projectRoot;
-    private String buildFile    = createPluginsSection(Stream.of(FREGE_PLUGIN_ID));
-    private Path fregeCompiler  = Paths.get("src/functionalTest/resources/frege3.25.84.jar");
-    private String settingsFile = "rootProject.name='frege-plugin'";
+    private String buildFile                            = createPluginsSection(
+        Stream.of(FREGE_PLUGIN_ID)
+        );
+    private boolean useLocalFregeCompiler               = true;
+    private String settingsFile                         = "rootProject.name='frege-plugin'";
+    private Supplier<Stream<FregeSourceFile>> fregeSourceFiles    = () -> Stream.empty();
 
-    private static volatile FregeProjectBuilder instance;
-
-    private static String createFregeSection(FregeDTO fregeDTO) 
+    
+    public static ProjectRoot builder()
     {
-         return String.format(
-             "%s {%s  %s%s}",
-             FREGE_EXTENSION_NAME,
-             System.lineSeparator(),
-             fregeDTO.toBuildFile(),
-             System.lineSeparator());
-     }
+        return new FregeProjectBuilder();
+    }
  
      private static void writeFile(
          File destination,
@@ -54,30 +61,54 @@ public final class FregeProjectBuilder implements ProjectRoot, BuildFile, Build
          writeFile(destination, content, false);
          return destination;
      }
+
+     private File writeToFile(FregeSourceFile fregeFile)
+     {
+         Path fregeFilePath = projectRoot.toPath().resolve(fregeFile.getFregeModulePath());
+         try
+         {
+            Files.createDirectories(
+            fregeFilePath
+            .getParent()
+        );
+            return writeToFile(
+                fregeFilePath.toFile(),
+                fregeFile.getFregeSourceCode()
+            );
+         } catch (IOException e)
+         {
+             throw new RuntimeException(e.getMessage(), e.getCause());
+         }
+     }
  
      private static File appendToFile(File destination, String content) throws IOException
      {
          writeFile(destination, System.lineSeparator() + content, true);
          return destination;
-     } 
+     }
+     
+     private File setupLocalFregeCompilerInDefaultPath() throws IOException
+     {
+         Files.createDirectories(
+             projectRoot
+             .toPath()
+             .resolve(DEFAULT_RELATIVE_COMPILER_DOWNLOAD_DIR));
+            return Files.copy(
+                LOCAL_COMPILER_PATH,
+                projectRoot
+                    .toPath()
+                    .resolve(DEFAULT_RELATIVE_COMPILER_DOWNLOAD_DIR)
+                    .resolve(LOCAL_COMPILER_PATH.getFileName())
+            ).toFile();
+     }
 
     private FregeProjectBuilder() {}
 
-    public static ProjectRoot getInstance()
-    {
-        FregeProjectBuilder result = instance;
-        if (result != null) return result;
-        synchronized (FregeProjectBuilder.class)
-        {
-            return instance == null ? new FregeProjectBuilder()
-                                    : instance;
-        }
-    }
 
     @Override
-    public Build fregeCompiler(Path fregeCompiler)
+    public Build useLocalFregeCompiler(boolean useLocalFregeCompiler)
     {
-        this.fregeCompiler = fregeCompiler;
+        this.useLocalFregeCompiler = useLocalFregeCompiler;
         return this;
     }
 
@@ -111,11 +142,27 @@ public final class FregeProjectBuilder implements ProjectRoot, BuildFile, Build
     }
 
     @Override
-    public Project build() throws IOException {
-        File settingsGradle = new File(projectRoot, "settings.gradle");
-        writeToFile(settingsGradle, settingsFile);
-        File buildGradle = new File(projectRoot, "build.gradle");
-        writeToFile(buildGradle, buildFile);
+    public Build fregeSourceFiles(Supplier<Stream<FregeSourceFile>> fregeSourceFiles)
+    {
+        this.fregeSourceFiles = fregeSourceFiles;
+        return this;
+    }
+
+    private File createGradleFile(String filename, String content) throws IOException
+    {
+        return writeToFile(
+            new File(projectRoot, filename),
+            content
+        );
+    }
+
+    @Override
+    public Project build() throws IOException
+    {
+        createGradleFile("settings.gradle", settingsFile);
+        createGradleFile("build.gradle", buildFile);
+        if (useLocalFregeCompiler) setupLocalFregeCompilerInDefaultPath();
+        fregeSourceFiles.get().map(this::writeToFile).findFirst();
         Project project = ProjectBuilder
             .builder()
             .withProjectDir(projectRoot)

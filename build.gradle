@@ -84,7 +84,4 @@ tasks.withType(Test).configureEach
         includeEngines 'jqwik', 'junit-jupiter'
         maxParallelForks = Runtime.runtime.availableProcessors().intdiv(2) ?: 1
     }
-    filter {
-        includeTestsMatching "*FunctionalTest"
-    }
 }

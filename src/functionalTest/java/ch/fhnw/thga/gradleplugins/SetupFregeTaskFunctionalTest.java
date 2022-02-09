@@ -1,8 +1,7 @@
 package ch.fhnw.thga.gradleplugins;
 
-import static ch.fhnw.thga.gradleplugins.FregeExtension.DEFAULT_DOWNLOAD_DIRECTORY;
+import static ch.fhnw.thga.gradleplugins.FregeExtension.DEFAULT_RELATIVE_COMPILER_DOWNLOAD_DIR;
 import static ch.fhnw.thga.gradleplugins.FregePlugin.SETUP_FREGE_TASK_NAME;
-import static ch.fhnw.thga.gradleplugins.SharedFunctionalTestLogic.createFregeGradleProject;
 import static ch.fhnw.thga.gradleplugins.SharedFunctionalTestLogic.createFregeSection;
 import static ch.fhnw.thga.gradleplugins.SharedFunctionalTestLogic.runGradleTask;
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS;
@@ -23,10 +22,10 @@ import org.junit.jupiter.api.io.TempDir;
 import ch.fhnw.thga.gradleplugins.fregeproject.FregeProjectBuilder;
 import ch.fhnw.thga.gradleplugins.fregeproject.ProjectRoot;
 
-class DownloadFregeCompilerFunctionalTest
+class SetupFregeTaskFunctionalTest
 {
-    private static FregeDTOBuilder FREGE_BUILDER             = FregeDTOBuilder.getInstance();
-    private static ProjectRoot FREGE_PROJECT_BUILDER = FregeProjectBuilder.getInstance();
+    private static FregeDTOBuilder FREGE_BUILDER             = FregeDTOBuilder.builder();
+    private static ProjectRoot FREGE_PROJECT_BUILDER = FregeProjectBuilder.builder();
 
     @Nested
     @IndicativeSentencesGeneration(separator = " -> ", generator = DisplayNameGenerator.ReplaceUnderscores.class)
@@ -44,6 +43,7 @@ class DownloadFregeCompilerFunctionalTest
             Project project = FREGE_PROJECT_BUILDER
                 .projectRoot(testProjectDir)
                 .buildFile(minimalBuildFileConfig)
+                .useLocalFregeCompiler(false)
                 .build();
 
             BuildResult result = runGradleTask(testProjectDir, SETUP_FREGE_TASK_NAME);
@@ -57,7 +57,7 @@ class DownloadFregeCompilerFunctionalTest
             assertTrue(
                 testProjectDir
                 .toPath()
-                .resolve(Paths.get(DEFAULT_DOWNLOAD_DIRECTORY, "frege3.25.84.jar"))
+                .resolve(Paths.get(DEFAULT_RELATIVE_COMPILER_DOWNLOAD_DIR, "frege3.25.84.jar"))
                 .toFile()
                 .exists()
             );
@@ -79,6 +79,7 @@ class DownloadFregeCompilerFunctionalTest
             Project project = FREGE_PROJECT_BUILDER
                 .projectRoot(testProjectDir)
                 .buildFile(buildFileConfigWithCustomDownloadDir)
+                .useLocalFregeCompiler(false)
                 .build();
     
             BuildResult result = runGradleTask(testProjectDir, SETUP_FREGE_TASK_NAME);

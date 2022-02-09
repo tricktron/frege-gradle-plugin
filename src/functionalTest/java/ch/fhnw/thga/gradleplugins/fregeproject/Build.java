@@ -1,13 +1,15 @@
 package ch.fhnw.thga.gradleplugins.fregeproject;
 
 import java.io.IOException;
-import java.nio.file.Path;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import org.gradle.api.Project;
 
 public interface Build
 {
-    Build fregeCompiler(Path fregeCompiler);
+    Build useLocalFregeCompiler(boolean useLocalFregeCompiler);
     Build settingsFile(String settingsFile);
+    Build fregeSourceFiles(Supplier<Stream<FregeSourceFile>> fregeSourceFiles);
     Project build() throws IOException;
 }
