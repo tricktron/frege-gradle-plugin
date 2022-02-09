@@ -22,7 +22,7 @@ public class GradleBuildFileConversionTest {
         return String.format("id '%s'", pluginId);
     }
 
-    static String createPluginsSection(Stream<String> pluginIds) {
+    public static String createPluginsSection(Stream<String> pluginIds) {
         String plugins = pluginIds.map(pluginId -> buildFilePluginString(pluginId)).collect(Collectors.joining("\n  "));
         return String.format("plugins {\n  %s\n}\n", plugins);
     }
