@@ -4,9 +4,11 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.CopyOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -98,8 +100,9 @@ public final class FregeProjectBuilder implements ProjectRoot, BuildFile, Build
                 projectRoot
                     .toPath()
                     .resolve(DEFAULT_RELATIVE_COMPILER_DOWNLOAD_DIR)
-                    .resolve(LOCAL_COMPILER_PATH.getFileName())
-            ).toFile();
+                    .resolve(LOCAL_COMPILER_PATH.getFileName()),
+                StandardCopyOption.REPLACE_EXISTING)
+            .toFile();
      }
 
     private FregeProjectBuilder() {}
@@ -162,7 +165,7 @@ public final class FregeProjectBuilder implements ProjectRoot, BuildFile, Build
         createGradleFile("settings.gradle", settingsFile);
         createGradleFile("build.gradle", buildFile);
         if (useLocalFregeCompiler) setupLocalFregeCompilerInDefaultPath();
-        fregeSourceFiles.get().map(this::writeToFile).findFirst();
+        fregeSourceFiles.get().map(this::writeToFile).toArray();
         Project project = ProjectBuilder
             .builder()
             .withProjectDir(projectRoot)

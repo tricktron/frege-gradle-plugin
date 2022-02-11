@@ -53,14 +53,24 @@ public class SharedFunctionalTestLogic
         return destination;
     }
 
-    static BuildResult runGradleTask(File testProjectDir, String... taskName)
+    static BuildResult runGradleTask(File testProjectDir, String... args)
     {
         return GradleRunner
             .create()
             .withProjectDir(testProjectDir)
             .withPluginClasspath()
-            .withArguments(taskName)
+            .withArguments(args)
             .build();
+    }
+    
+    static BuildResult runAndFailGradleTask(File testProjectDir, String... args)
+    {
+        return GradleRunner
+            .create()
+            .withProjectDir(testProjectDir)
+            .withPluginClasspath()
+            .withArguments(args)
+            .buildAndFail();
     }
 
     static File createSettingsFile(File testProjectDir) throws IOException 

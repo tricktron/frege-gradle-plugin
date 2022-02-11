@@ -25,6 +25,7 @@ import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.PathSensitive;
 import org.gradle.api.tasks.PathSensitivity;
 import org.gradle.api.tasks.TaskAction;
+import org.gradle.api.tasks.options.Option;
 
 @CacheableTask
 public abstract class CompileFregeTask extends DefaultTask {
@@ -46,7 +47,10 @@ public abstract class CompileFregeTask extends DefaultTask {
     public abstract Property<String> getFregeDependencies();
 
     @Input
-    public abstract Property<String> getFregeMainModuleName();
+    @Option(option = "compileItem",
+           description = "The absolute path to the frege file or the module name"
+    )
+    public abstract Property<String> getFregeCompileItem();
 
     @OutputDirectory
     public abstract DirectoryProperty getFregeOutputDir();
@@ -63,7 +67,7 @@ public abstract class CompileFregeTask extends DefaultTask {
 
     @Internal
     public final Provider<List<String>> getCompileItems() {
-        return getFregeMainModuleName()
+        return getFregeCompileItem()
             .map(name ->
             {
                 return name.isEmpty() ? getFregeSourceFiles().get()

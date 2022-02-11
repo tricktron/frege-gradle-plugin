@@ -52,7 +52,7 @@ public class FregePlugin implements Plugin<Project>
                     task.getFregeOutputDir().set(extension.getOutputDir());
                     task.getFregeCompilerFlags().set(extension.getCompilerFlags());
                     task.getFregeDependencies().set(implementation.getAsPath());
-                    task.getFregeMainModuleName().set("");
+                    task.getFregeCompileItem().set("");
                 }
             );
 
@@ -66,7 +66,7 @@ public class FregePlugin implements Plugin<Project>
                 task.dependsOn(compileFregeTask.map(
                     compileTask ->
                     {
-                        compileTask.getFregeMainModuleName().set(task.getMainModule());
+                        compileTask.getFregeCompileItem().set(task.getMainModule());
                         return compileTask;
                     })
                 .get());
@@ -86,7 +86,7 @@ public class FregePlugin implements Plugin<Project>
                 task.dependsOn(compileFregeTask.map(
                     compileTask ->
                     {
-                        compileTask.getFregeMainModuleName().set(task.getReplSource());
+                        compileTask.getFregeCompileItem().set(task.getReplSource());
                         return compileTask;
                     })
                 .get());

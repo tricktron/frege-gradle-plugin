@@ -16,7 +16,6 @@ dependencies
     testImplementation group: junit5Group,          name: 'junit-jupiter-api',      version: junit5Version
     testImplementation group: 'net.jqwik',          name: 'jqwik',                  version: '1.6.3'
     testRuntimeOnly    group: junit5Group,          name: 'junit-jupiter-engine',   version: junit5Version
-    testRuntimeOnly    group: 'org.junit.platform', name: 'junit-platform-console', version: junit5Version
     testImplementation(enforcedPlatform("org.junit:junit-bom:${junit5Version}"))
 }
 
@@ -56,15 +55,6 @@ configurations
     functionalRuntimeOnly.extendsFrom runtimeOnly
 }
 
-tasks.register('consoleLauncher', JavaExec)
-{
-    dependsOn testClasses
-    def reportsDir = layout.buildDirectory.dir('test-results')
-    mainClass      = 'org.junit.platform.console.ConsoleLauncher'
-    outputs.dir reportsDir
-    classpath sourceSets.test.runtimeClasspath + sourceSets.functionalTest.runtimeClasspath
-    args '--scan-classpath', '--details', 'summary', '--reports-dir', reportsDir.get()
-}
 
 tasks.register('functionalTest', Test)
 {
@@ -75,7 +65,7 @@ tasks.register('functionalTest', Test)
     shouldRunAfter test
 }
 
-check.dependsOn consoleLauncher
+check.dependsOn functionalTest
 
 tasks.withType(Test).configureEach
 {
