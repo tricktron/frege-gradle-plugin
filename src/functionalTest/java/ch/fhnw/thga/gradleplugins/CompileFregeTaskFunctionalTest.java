@@ -5,6 +5,7 @@ import static ch.fhnw.thga.gradleplugins.FregePlugin.COMPILE_FREGE_TASK_NAME;
 import static ch.fhnw.thga.gradleplugins.SharedFunctionalTestLogic.createFregeSection;
 import static ch.fhnw.thga.gradleplugins.SharedFunctionalTestLogic.runAndFailGradleTask;
 import static ch.fhnw.thga.gradleplugins.SharedFunctionalTestLogic.runGradleTask;
+import static ch.fhnw.thga.gradleplugins.SharedFunctionalTestLogic.NEW_LINE;
 import static org.gradle.testkit.runner.TaskOutcome.FAILED;
 import static org.gradle.testkit.runner.TaskOutcome.FROM_CACHE;
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS;
@@ -28,7 +29,6 @@ import ch.fhnw.thga.gradleplugins.fregeproject.FregeSourceFile;
 
 public class CompileFregeTaskFunctionalTest
 {
-    private static final String NEW_LINE               = System.lineSeparator();
     private static final FregeSourceFile COMPLETION_FR = new FregeSourceFile(
         String.format("%s/%s",
             DEFAULT_RELATIVE_SOURCE_DIR,

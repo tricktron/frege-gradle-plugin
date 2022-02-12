@@ -17,11 +17,13 @@ import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.IndicativeSentencesGeneration;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.io.TempDir;
 
 import ch.fhnw.thga.gradleplugins.fregeproject.FregeProjectBuilder;
 import ch.fhnw.thga.gradleplugins.fregeproject.ProjectRoot;
 
+@Tag("network")
 class SetupFregeTaskFunctionalTest
 {
     private static FregeDTOBuilder FREGE_BUILDER             = FregeDTOBuilder.builder();

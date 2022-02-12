@@ -17,8 +17,8 @@ import org.gradle.testkit.runner.GradleRunner;
 
 public class SharedFunctionalTestLogic
 {
-
-   static String createFregeSection(FregeDTO fregeDTO) 
+    public static final String NEW_LINE = System.lineSeparator();
+    static String createFregeSection(FregeDTO fregeDTO) 
    {
         return String.format(
             "%s {%s  %s%s}",

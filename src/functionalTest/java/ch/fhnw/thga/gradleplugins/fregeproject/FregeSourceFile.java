@@ -1,7 +1,5 @@
 package ch.fhnw.thga.gradleplugins.fregeproject;
 
-import java.nio.file.Path;
-
 public class FregeSourceFile
 {
     private final String modulePath;
