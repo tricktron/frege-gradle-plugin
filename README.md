@@ -14,14 +14,15 @@ git clone https://github.com/tricktron/frege-gradle-plugin.git
 ```
 
 ## How to Use
-1. Specify the frege compiler release, version, main module and repl source file in your `build.gradle`:
+1. Specify the frege compiler release, version, main module and repl source 
+file in your `build.gradle`:
 
 ```groovy
 frege {
     version = '3.25.84'
     release = '3.25alpha'
     mainModule = 'my.mod.Name' // see runFrege task
-    replSource = 'Name.fr' // see replFrege task
+    replModule = 'my.mod.Name' // see replFrege task
 }
 ```
 
@@ -36,13 +37,23 @@ Optional configuration parameters inside `build.gradle`:
 ### Added Tasks
 
 - **setupFrege**: Downloads the specified version of the Frege compiler.
-- **compileFrege**: All your `*.fr` files in `mainSourceDir` get compiled to `outputDir`.
-- **runFrege**: Runs the Frege module specified by `mainModule`. Alternatively you can also pass the main module by command line, e.g: `gradle runFrege --mainModule=my.mod.Name`.
-- **replFrege**: Takes care of all project dependencies of the specified filename by `replSource` and prints the command to start the Frege REPL, e.g: `java -cp <your-correct-classpath-with-all-dependencies> frege.repl.FregeRepl`. Afterwards you can load your file into the repl with `:l <absolute path to replSource>`.
+- **compileFrege**: Compiles all your `*.fr` files in `mainSourceDir` to `outputDir`.
+Alternatively, you can also pass the compile item by command line. Then only the
+compile item and its dependencies get compiled. 
+E.g.: `gradle compileFrege --compileItem=[full module name | absolute path to .fr file]`.
+- **runFrege**: Runs the Frege module specified by `mainModule`. Alternatively you can
+also pass the main module by command line, e.g: `gradle runFrege --mainModule=my.mod.Name`.
+- **replFrege**: Takes care of all project dependencies of the specified `replModule`
+and prints the command to start the Frege REPL and load the `replModule`. 
+E.g.: `(echo :l <path to replModule.fr> && cat) | java -cp <your-correct-classpath-with-all-dependencies> frege.repl.FregeRepl`.
+On Unix you can even further automate starting the repl and loading the module
+ with the following one-liner:
+`eval $(./gradlew -q replFrege)`.
 
 ### Dependencies
 
-Dependencies can be configured as expected in your `build.gradle` file, using the `implementation` scope, e.g.:
+Dependencies can be configured as expected in your `build.gradle` file, using the
+`implementation` scope, e.g.:
 
 ```groovy
 repositories {
@@ -56,7 +67,8 @@ dependencies {
 
 ### Build Cache
 
-The `compileFrege` task supports incremental builds from build cache. Enable the build cache by setting `org.gradle.caching=true` in your `gradle.properites`.
+The `compileFrege` task supports incremental builds from build cache. Enable the build
+cache by setting `org.gradle.caching=true` in your `gradle.properites`.
 
 
 ## How to Contribute
