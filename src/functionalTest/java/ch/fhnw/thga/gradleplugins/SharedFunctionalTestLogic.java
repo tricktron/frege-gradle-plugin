@@ -3,6 +3,8 @@ package ch.fhnw.thga.gradleplugins;
 import static ch.fhnw.thga.gradleplugins.FregePlugin.FREGE_EXTENSION_NAME;
 import static ch.fhnw.thga.gradleplugins.FregePlugin.FREGE_PLUGIN_ID;
 import static ch.fhnw.thga.gradleplugins.GradleBuildFileConversionTest.createPluginsSection;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static ch.fhnw.thga.gradleplugins.FregeExtension.DEFAULT_RELATIVE_SOURCE_DIR;
 
 import java.io.BufferedWriter;
@@ -44,6 +46,32 @@ public class SharedFunctionalTestLogic
             NEW_LINE
         )
     );
+
+    public static final boolean fileExists(
+        File testProjectDir,
+        String relativeFilePath)
+    {
+        return testProjectDir
+        .toPath()
+        .resolve(relativeFilePath)
+        .toFile()
+        .exists();
+    }
+
+    public static final void assertFileExists(
+        File testProjectDir,
+        String relativeFilePath)
+    {
+        assertTrue(fileExists(testProjectDir, relativeFilePath));
+    }
+
+
+    public static final void assertFileDoesNotExist(
+        File testProjectDir,
+        String relativeFilePath)
+    {
+        assertFalse(fileExists(testProjectDir, relativeFilePath));
+    }
     
     static String createFregeSection(FregeDTO fregeDTO) 
    {

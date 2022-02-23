@@ -8,6 +8,7 @@ import static ch.fhnw.thga.gradleplugins.SharedFunctionalTestLogic.runGradleTask
 import static ch.fhnw.thga.gradleplugins.SharedFunctionalTestLogic.NEW_LINE;
 import static ch.fhnw.thga.gradleplugins.SharedFunctionalTestLogic.MINIMAL_BUILD_FILE_CONFIG;
 import static ch.fhnw.thga.gradleplugins.SharedFunctionalTestLogic.COMPLETION_FR;
+import static ch.fhnw.thga.gradleplugins.SharedFunctionalTestLogic.assertFileExists;
 import static org.gradle.testkit.runner.TaskOutcome.FAILED;
 import static org.gradle.testkit.runner.TaskOutcome.FROM_CACHE;
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS;
@@ -31,17 +32,6 @@ import ch.fhnw.thga.gradleplugins.fregeproject.FregeSourceFile;
 
 public class CompileFregeTaskFunctionalTest
 {
-    private static final boolean assertFileExists(
-        File testProjectDir,
-        String relativeFilePath)
-    {
-        return testProjectDir
-        .toPath()
-        .resolve(relativeFilePath)
-        .toFile()
-        .exists();
-    }
-
     @Nested
     @IndicativeSentencesGeneration(
         separator = " -> ",
@@ -159,11 +149,11 @@ public class CompileFregeTaskFunctionalTest
             );
             assertFileExists(
                 testProjectDir,
-                "build/classes/main/frege/ch/fhnw/thga/Completion.java"
+                "build/frege/ch/fhnw/thga/Completion.java"
             );
             assertFileExists(
                 testProjectDir,
-                "build/classes/main/frege/ch/fhnw/thga/Completion.class"
+                "build/frege/ch/fhnw/thga/Completion.class"
             );
         }
         @Test

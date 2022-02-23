@@ -5,6 +5,8 @@ import org.gradle.api.DefaultTask;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.file.FileTree;
 import org.gradle.api.file.RegularFileProperty;
+import org.gradle.api.logging.Logger;
+import org.gradle.api.logging.Logging;
 import org.gradle.api.provider.Property;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.Input;
@@ -15,6 +17,7 @@ import org.gradle.api.tasks.TaskAction;
 import org.gradle.api.tasks.options.Option;
 
 public abstract class ReplFregeTask extends DefaultTask {
+    private static final Logger LOGGER         = Logging.getLogger(ReplFregeTask.class);
     public static final String REPL_MAIN_CLASS = "frege.repl.FregeRepl";
 
     @InputFile
@@ -25,6 +28,9 @@ public abstract class ReplFregeTask extends DefaultTask {
 
     @InputDirectory
     public abstract DirectoryProperty getFregeOutputDir();
+
+    @InputDirectory
+    public abstract DirectoryProperty getFregeMainSourceDir();
 
     @Input
     @Option(option     = "replModule",
@@ -39,30 +45,67 @@ public abstract class ReplFregeTask extends DefaultTask {
     }
 
     @Internal
-    public final Provider<FileTree> getClasspathWithoutReplClassFile()
+    public final Provider<FileTree> getReplClassFiles()
     {
         return getFregeOutputDir()
             .map(outDir -> outDir.getAsFileTree())
-            .map(tree   -> tree.matching(pattern -> pattern.exclude("**/*.java")))
-            .map(tree   -> tree.matching(pattern -> pattern.exclude(
-                String.format(
-                    "**/%s.class",
-                    getReplClassName().get()
+            .map(tree   -> tree.matching(
+                pattern -> pattern.include(
+                    String.format(
+                        "**/%s.class",
+                        getReplClassName().get()
+                    )
                 )
-            )));
+            ));
+    }
+
+    @Internal
+    public final Provider<FileTree> getReplJavaFiles()
+    {
+        return getFregeOutputDir()
+            .map(outDir -> outDir.getAsFileTree())
+            .map(tree   -> tree.matching(
+                pattern -> pattern.include(
+                    String.format(
+                        "**/%s.java",
+                        getReplClassName().get()
+                    )
+                ))
+            );
+    }
+
+    @Internal
+    public final Provider<FileTree> getReplFregeFile()
+    {
+        return getFregeMainSourceDir()
+            .map(outDir -> outDir.getAsFileTree())
+            .map(tree   -> tree.matching(
+                pattern -> pattern.include(
+                    String.format(
+                        "**/%s.fr",
+                        getReplClassName().get()
+                    )
+                ))
+            );
     }
 
     @TaskAction
-    public void printStartFregeReplCommand() {
-        System.out.println("Execute the following command to start the Frege Repl:");
-        System.out.println(String.format(
-            "java -cp %s %s",
+    public void printStartFregeReplCommand()
+    {
+        getProject().delete(getReplJavaFiles());
+        getProject().delete(getReplClassFiles());
+        LOGGER.lifecycle(
+            "Execute the following command to start the Frege Repl and load the Frege module:");
+        LOGGER.quiet(String.format(
+            "(echo :l %s && cat) | java -cp %s %s",
+            getReplFregeFile().get().getAsPath(),
             SharedTaskLogic.setupClasspath(
                 getProject(),
                 getFregeDependencies(),
                 getFregeCompilerJar(),
-                getClasspathWithoutReplClassFile())
+                getFregeOutputDir())
             .get().getAsPath(),
-            REPL_MAIN_CLASS));
+            REPL_MAIN_CLASS)
+        );
     }
 }

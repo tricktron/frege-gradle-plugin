@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.file.RegularFileProperty;
+import org.gradle.api.logging.LogLevel;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
@@ -30,7 +31,7 @@ import org.gradle.api.tasks.options.Option;
 @CacheableTask
 public abstract class CompileFregeTask extends DefaultTask {
     private static final String FREGE_FILES_GLOB_PATTERN = "**/*.fr";
-    private final JavaExec javaExec;
+    private JavaExec javaExec;
 
     @InputFile
     @PathSensitive(PathSensitivity.RELATIVE)
@@ -113,12 +114,18 @@ public abstract class CompileFregeTask extends DefaultTask {
     }
 
     @TaskAction
-    public void compileFrege() {
+    public void compileFrege()
+    {
+        this.getLogging().captureStandardOutput(LogLevel.LIFECYCLE);
         List<String> targetDirectoryArg = List.of(
             "-d",
-            getFregeOutputDir().getAsFile().get().getAbsolutePath());
-
-        javaExec.setClasspath(getProject().files(getFregeCompilerJar()))
-                .setArgs(buildCompilerArgsFromProperties(targetDirectoryArg)).exec();
+            getFregeOutputDir().getAsFile().get().getAbsolutePath()
+        );
+        javaExec.setClasspath(
+            getProject()
+            .files(getFregeCompilerJar()))
+            .setErrorOutput(System.out)
+            .setArgs(buildCompilerArgsFromProperties(targetDirectoryArg))
+            .exec();
     }
 }

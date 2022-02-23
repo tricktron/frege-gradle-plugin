@@ -94,6 +94,7 @@ public class FregePlugin implements Plugin<Project>
                     setupFregeCompilerTask.get().getFregeCompilerOutputPath());
                 task.getFregeOutputDir().set(extension.getOutputDir());
                 task.getFregeDependencies().set(implementation.getAsPath());
+                task.getFregeMainSourceDir().set(extension.getMainSourceDir());
             }
         );
     }
