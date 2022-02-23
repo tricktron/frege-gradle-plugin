@@ -6,6 +6,7 @@ import static ch.fhnw.thga.gradleplugins.SharedFunctionalTestLogic.NEW_LINE;
 import static ch.fhnw.thga.gradleplugins.SharedFunctionalTestLogic.createFregeSection;
 import static ch.fhnw.thga.gradleplugins.SharedFunctionalTestLogic.runAndFailGradleTask;
 import static ch.fhnw.thga.gradleplugins.SharedFunctionalTestLogic.runGradleTask;
+import static ch.fhnw.thga.gradleplugins.SharedFunctionalTestLogic.MINIMAL_BUILD_FILE_CONFIG;
 import static org.gradle.testkit.runner.TaskOutcome.FAILED;
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -91,17 +92,10 @@ public class RunFregeTaskFunctionalTest
             @TempDir File testProjectDir)
             throws Exception
         {
-            String mainBuildConfig = createFregeSection(
-                FregeDTOBuilder
-                .builder()
-                .version("'3.25.84'")
-                .release("'3.25alpha'")
-                .build()
-            );
             Project project = FregeProjectBuilder
                 .builder()
                 .projectRoot(testProjectDir)
-                .buildFile(mainBuildConfig)
+                .buildFile(MINIMAL_BUILD_FILE_CONFIG)
                 .fregeSourceFiles(() -> Stream.of(MAIN_FR))
                 .build();
             

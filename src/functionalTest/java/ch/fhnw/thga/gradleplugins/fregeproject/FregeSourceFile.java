@@ -7,8 +7,8 @@ public class FregeSourceFile
 
     public FregeSourceFile(String modulePath, String sourceCode)
     {
-        this.modulePath   = modulePath;
-        this.sourceCode   = sourceCode;   
+        this.modulePath = modulePath;
+        this.sourceCode = sourceCode;   
     }
 
     public String getFregeModulePath()

@@ -1,26 +1,22 @@
 package ch.fhnw.thga.gradleplugins.fregeproject;
 
+import static ch.fhnw.thga.gradleplugins.FregeExtension.DEFAULT_RELATIVE_COMPILER_DOWNLOAD_DIR;
+import static ch.fhnw.thga.gradleplugins.FregePlugin.FREGE_PLUGIN_ID;
+import static ch.fhnw.thga.gradleplugins.GradleBuildFileConversionTest.createPluginsSection;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.CopyOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import org.gradle.api.Project;
 import org.gradle.testfixtures.ProjectBuilder;
-
-import ch.fhnw.thga.gradleplugins.FregeDTO;
-import static ch.fhnw.thga.gradleplugins.FregePlugin.FREGE_EXTENSION_NAME;
-import static ch.fhnw.thga.gradleplugins.FregePlugin.FREGE_PLUGIN_ID;
-import static ch.fhnw.thga.gradleplugins.GradleBuildFileConversionTest.createPluginsSection;
-import static ch.fhnw.thga.gradleplugins.FregeExtension.DEFAULT_RELATIVE_COMPILER_DOWNLOAD_DIR;
 
 public final class FregeProjectBuilder implements ProjectRoot, BuildFile, Build
 {
@@ -81,12 +77,6 @@ public final class FregeProjectBuilder implements ProjectRoot, BuildFile, Build
          {
              throw new RuntimeException(e.getMessage(), e.getCause());
          }
-     }
- 
-     private static File appendToFile(File destination, String content) throws IOException
-     {
-         writeFile(destination, System.lineSeparator() + content, true);
-         return destination;
      }
      
      private File setupLocalFregeCompilerInDefaultPath() throws IOException

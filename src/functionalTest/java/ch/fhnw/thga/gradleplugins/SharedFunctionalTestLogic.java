@@ -3,6 +3,7 @@ package ch.fhnw.thga.gradleplugins;
 import static ch.fhnw.thga.gradleplugins.FregePlugin.FREGE_EXTENSION_NAME;
 import static ch.fhnw.thga.gradleplugins.FregePlugin.FREGE_PLUGIN_ID;
 import static ch.fhnw.thga.gradleplugins.GradleBuildFileConversionTest.createPluginsSection;
+import static ch.fhnw.thga.gradleplugins.FregeExtension.DEFAULT_RELATIVE_SOURCE_DIR;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -15,9 +16,35 @@ import org.gradle.testfixtures.ProjectBuilder;
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
 
+import ch.fhnw.thga.gradleplugins.fregeproject.FregeSourceFile;
+
 public class SharedFunctionalTestLogic
 {
     public static final String NEW_LINE = System.lineSeparator();
+    public static final String MINIMAL_BUILD_FILE_CONFIG = createFregeSection(
+        FregeDTOBuilder
+        .builder()
+        .version("'3.25.84'")
+        .release("'3.25alpha'")
+        .build()
+    );
+    public static final FregeSourceFile COMPLETION_FR = new FregeSourceFile(
+        String.format("%s/%s",
+            DEFAULT_RELATIVE_SOURCE_DIR,
+            "ch/fhnw/thga/Completion.fr"),
+        String.join
+        (
+            NEW_LINE,
+            "module ch.fhnw.thga.Completion where",
+            NEW_LINE,
+            NEW_LINE,
+            "  complete :: Int -> (Int, String)",
+            NEW_LINE,
+            "  complete i = (i, \"Frege rocks\")",
+            NEW_LINE
+        )
+    );
+    
     static String createFregeSection(FregeDTO fregeDTO) 
    {
         return String.format(

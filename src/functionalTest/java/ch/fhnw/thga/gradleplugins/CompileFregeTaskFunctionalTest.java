@@ -6,6 +6,8 @@ import static ch.fhnw.thga.gradleplugins.SharedFunctionalTestLogic.createFregeSe
 import static ch.fhnw.thga.gradleplugins.SharedFunctionalTestLogic.runAndFailGradleTask;
 import static ch.fhnw.thga.gradleplugins.SharedFunctionalTestLogic.runGradleTask;
 import static ch.fhnw.thga.gradleplugins.SharedFunctionalTestLogic.NEW_LINE;
+import static ch.fhnw.thga.gradleplugins.SharedFunctionalTestLogic.MINIMAL_BUILD_FILE_CONFIG;
+import static ch.fhnw.thga.gradleplugins.SharedFunctionalTestLogic.COMPLETION_FR;
 import static org.gradle.testkit.runner.TaskOutcome.FAILED;
 import static org.gradle.testkit.runner.TaskOutcome.FROM_CACHE;
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS;
@@ -29,30 +31,6 @@ import ch.fhnw.thga.gradleplugins.fregeproject.FregeSourceFile;
 
 public class CompileFregeTaskFunctionalTest
 {
-    private static final FregeSourceFile COMPLETION_FR = new FregeSourceFile(
-        String.format("%s/%s",
-            DEFAULT_RELATIVE_SOURCE_DIR,
-            "ch/fhnw/thga/Completion.fr"),
-        String.join
-        (
-            NEW_LINE,
-            "module ch.fhnw.thga.Completion where",
-            NEW_LINE,
-            NEW_LINE,
-            "  complete :: Int -> (Int, String)",
-            NEW_LINE,
-            "  complete i = (i, \"Frege rocks\")",
-            NEW_LINE
-        )
-    );
-    private static final String MINIMAL_BUILD_FILE_CONFIG = createFregeSection(
-        FregeDTOBuilder
-        .builder()
-        .version("'3.25.84'")
-        .release("'3.25alpha'")
-        .build()
-    );
-
     private static final boolean assertFileExists(
         File testProjectDir,
         String relativeFilePath)

@@ -5,7 +5,8 @@ import org.gradle.api.file.FileCollection;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.provider.Property;
 
-public final class SharedTaskLogic {
+public final class SharedTaskLogic
+{
     private SharedTaskLogic() {};
 
     public static final Provider<FileCollection> setupClasspath(
@@ -19,4 +20,9 @@ public final class SharedTaskLogic {
                                            : project.files(depsClasspath, paths);
         });
     }
+
+   public static final String extractClassNameFromFregeModuleName(String moduleName)
+   {
+       return moduleName.substring(moduleName.lastIndexOf(".") + 1);
+   } 
 }
