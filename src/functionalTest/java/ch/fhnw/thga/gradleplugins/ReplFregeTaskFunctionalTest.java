@@ -16,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.stream.Stream;
 
 import org.gradle.api.Project;
@@ -68,7 +69,9 @@ public class ReplFregeTaskFunctionalTest
                 result.task(":" + REPL_FREGE_TASK_NAME).getOutcome());
             assertTrue(result.getOutput().contains("java -cp"));
             assertTrue(result.getOutput().contains("frege3.25.84.jar"));
-            assertTrue(result.getOutput().contains(COMPLETION_FR.getFregeModulePath()));
+            assertTrue(result.getOutput().contains(
+                Paths.get(COMPLETION_FR.getFregeModulePath()).normalize().toString())
+            );
             assertFileDoesNotExist(
                 testProjectDir,
                 "build/classes/main/frege/ch/fhnw/thga/Completion.java"
@@ -124,7 +127,9 @@ public class ReplFregeTaskFunctionalTest
                 result.task(":" + REPL_FREGE_TASK_NAME).getOutcome());
             assertTrue(result.getOutput().contains("java -cp"));
             assertTrue(result.getOutput().contains("frege3.25.84.jar"));
-            assertTrue(result.getOutput().contains(frob_FR.getFregeModulePath()));
+            assertTrue(result.getOutput().contains(
+                Paths.get(frob_FR.getFregeModulePath()).normalize().toString())
+            );
             assertFileExists(
                 testProjectDir,
                 "build/classes/main/frege/ch/fhnw/thga/Completion.java"
