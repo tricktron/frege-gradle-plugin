@@ -1,0 +1,3 @@
+module ch.fhnw.thga.Dep where
+
+square x = x * x

@@ -9,11 +9,12 @@ import org.gradle.api.file.ProjectLayout;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
 
-public abstract class FregeExtension {
-    public static final String DEFAULT_DOWNLOAD_DIRECTORY   = "lib";
-    public static final String DEFAULT_RELATIVE_OUTPUT_DIR  = "classes/main/frege";
-    public static final String DEFAULT_RELATIVE_SOURCE_DIR  = "src/main/frege";
-    public static final List<String> DEFAULT_COMPILER_FLAGS = List.of("-O", "-make");
+public abstract class FregeExtension
+{
+    public static final String DEFAULT_RELATIVE_COMPILER_DOWNLOAD_DIR   = "lib";
+    public static final String DEFAULT_RELATIVE_OUTPUT_DIR              = "classes/main/frege";
+    public static final String DEFAULT_RELATIVE_SOURCE_DIR              = "src/main/frege";
+    public static final List<String> DEFAULT_COMPILER_FLAGS             = List.of("-O", "-make");
 
     public abstract Property<String> getVersion();
 
@@ -29,12 +30,13 @@ public abstract class FregeExtension {
 
     public abstract ListProperty<String> getCompilerFlags();
 
-    public abstract Property<String> getReplSource();
+    public abstract Property<String> getReplModule();
 
     @Inject
-    public FregeExtension(ProjectLayout projectLayout) {
+    public FregeExtension(ProjectLayout projectLayout)
+    {
         getCompilerDownloadDir()
-        .convention(projectLayout.getProjectDirectory().dir(DEFAULT_DOWNLOAD_DIRECTORY));
+        .convention(projectLayout.getProjectDirectory().dir(DEFAULT_RELATIVE_COMPILER_DOWNLOAD_DIR));
 
         getMainSourceDir()
         .convention(projectLayout.getProjectDirectory().dir(DEFAULT_RELATIVE_SOURCE_DIR));

@@ -6,3 +6,5 @@ build
 .settings
 bin
 .DS_Store
+lib
+.jqwik-database

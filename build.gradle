@@ -13,8 +13,10 @@ dependencies
 {
     def junit5Group   = 'org.junit.jupiter'
     def junit5Version = '5.8.2'
-    testImplementation group: junit5Group, name: 'junit-jupiter-api', version: junit5Version
-    testRuntimeOnly group: junit5Group, name: 'junit-jupiter-engine', version: junit5Version
+    testImplementation group: junit5Group,          name: 'junit-jupiter-api',      version: junit5Version
+    testImplementation group: 'net.jqwik',          name: 'jqwik',                  version: '1.6.3'
+    testRuntimeOnly    group: junit5Group,          name: 'junit-jupiter-engine',   version: junit5Version
+    testImplementation(enforcedPlatform("org.junit:junit-bom:${junit5Version}"))
 }
 
 java
@@ -53,6 +55,7 @@ configurations
     functionalRuntimeOnly.extendsFrom runtimeOnly
 }
 
+
 tasks.register('functionalTest', Test)
 {
     description     = 'Runs functional tests.'
@@ -66,6 +69,10 @@ check.dependsOn functionalTest
 
 tasks.withType(Test).configureEach
 {
-    useJUnitPlatform()
-    maxParallelForks 6
+    useJUnitPlatform
+    {
+        includeEngines 'jqwik', 'junit-jupiter'
+        maxParallelForks = Runtime.runtime.availableProcessors().intdiv(2) ?: 1
+        excludeTags 'network'
+    }
 }

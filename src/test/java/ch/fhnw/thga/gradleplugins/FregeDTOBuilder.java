@@ -8,22 +8,13 @@ public final class FregeDTOBuilder implements Builder {
     private String outputDir = "";
     private String mainModule = "";
     private String compilerFlags = "";
-    private String replSource = "";
+    private String replModule = "";
 
-    private static volatile FregeDTOBuilder instance;
+    private FregeDTOBuilder() {}
 
-    private FregeDTOBuilder() {
-    }
-
-    public static FregeDTOBuilder getInstance() {
-        FregeDTOBuilder result = instance;
-        if (result != null) {
-            return result;
-        } else {
-            synchronized (FregeDTOBuilder.class) {
-                return (instance == null) ? new FregeDTOBuilder() : instance;
-            }
-        }
+    public static FregeDTOBuilder builder()
+    {
+        return new FregeDTOBuilder();
     }
 
 
@@ -74,9 +65,9 @@ public final class FregeDTOBuilder implements Builder {
     }
 
     @Override
-    public Builder replSource(String replSource)
+    public Builder replModule(String replModule)
     {
-        this.replSource = replSource;
+        this.replModule = replModule;
         return this;
     }
 
@@ -89,6 +80,6 @@ public final class FregeDTOBuilder implements Builder {
             outputDir,
             mainModule,
             compilerFlags,
-            replSource);
+            replModule);
     }
 }
