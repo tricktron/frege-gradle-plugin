@@ -7,6 +7,8 @@ import static ch.fhnw.thga.gradleplugins.SharedFunctionalTestLogic.createFregeSe
 import static ch.fhnw.thga.gradleplugins.SharedFunctionalTestLogic.runAndFailGradleTask;
 import static ch.fhnw.thga.gradleplugins.SharedFunctionalTestLogic.runGradleTask;
 import static ch.fhnw.thga.gradleplugins.SharedFunctionalTestLogic.MINIMAL_BUILD_FILE_CONFIG;
+import static ch.fhnw.thga.gradleplugins.SharedFunctionalTestLogic.COMPLETION_FR;
+import static ch.fhnw.thga.gradleplugins.SharedFunctionalTestLogic.assertFileDoesNotExist;
 import static org.gradle.testkit.runner.TaskOutcome.FAILED;
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -116,7 +118,46 @@ public class RunFregeTaskFunctionalTest
             );
             assertTrue(result.getOutput().contains("Frege rocks"));
         }
+
+        @Test
+        void given_two_frege_files_then_only_the_specified_main_module_is_compiled(
+            @TempDir File testProjectDir)
+            throws Exception
+        {
+            Project project = FregeProjectBuilder
+                .builder()
+                .projectRoot(testProjectDir)
+                .buildFile(MINIMAL_BUILD_FILE_CONFIG)
+                .fregeSourceFiles(() -> Stream.of(MAIN_FR, COMPLETION_FR))
+                .build();
+            
+            BuildResult result = runGradleTask(
+                testProjectDir,
+                RUN_FREGE_TASK_NAME,
+                "--mainModule=ch.fhnw.thga.Main");
+            
+            assertTrue(
+                project
+                .getTasks()
+                .getByName(RUN_FREGE_TASK_NAME) 
+                instanceof RunFregeTask
+            );
+            assertEquals(
+                SUCCESS,
+                result.task(":" + RUN_FREGE_TASK_NAME).getOutcome()
+            );
+            assertTrue(result.getOutput().contains("Frege rocks"));
+            assertFileDoesNotExist(
+                testProjectDir,
+                "build/classes/main/frege/ch/fhnw/thga/Completion.java"
+            );
+            assertFileDoesNotExist(
+                testProjectDir,
+                "build/classes/main/frege/ch/fhnw/thga/Completion.class"
+            );
+        }
     }
+    
     @Nested
     @IndicativeSentencesGeneration(
         separator = " -> ",

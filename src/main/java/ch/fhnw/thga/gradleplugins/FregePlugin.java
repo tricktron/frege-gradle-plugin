@@ -3,6 +3,7 @@ package ch.fhnw.thga.gradleplugins;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
+import org.gradle.api.logging.LogLevel;
 import org.gradle.api.tasks.TaskProvider;
 
 public class FregePlugin implements Plugin<Project>
@@ -52,7 +53,6 @@ public class FregePlugin implements Plugin<Project>
                     task.getFregeOutputDir().set(extension.getOutputDir());
                     task.getFregeCompilerFlags().set(extension.getCompilerFlags());
                     task.getFregeDependencies().set(implementation.getAsPath());
-                    task.getFregeCompileItem().set("");
                 }
             );
 
@@ -61,7 +61,6 @@ public class FregePlugin implements Plugin<Project>
             RunFregeTask.class,
             task ->
             {
-                
                 task.getMainModule().set(extension.getMainModule());
                 task.dependsOn(compileFregeTask.map(
                     compileTask ->
@@ -69,7 +68,7 @@ public class FregePlugin implements Plugin<Project>
                         compileTask.getFregeCompileItem().set(task.getMainModule());
                         return compileTask;
                     }
-                ));
+                ).get());
                 task.getFregeCompilerJar().set(
                     setupFregeCompilerTask.get().getFregeCompilerOutputPath());
                 task.getFregeOutputDir().set(extension.getOutputDir());
@@ -86,10 +85,12 @@ public class FregePlugin implements Plugin<Project>
                 task.dependsOn(compileFregeTask.map(
                     compileTask ->
                     {
-                        compileTask.getFregeCompileItem().set(task.getReplModule());
+                        compileTask.getFregeCompileItem().set(extension.getReplModule());
+                        compileTask.getLogging().captureStandardOutput(LogLevel.LIFECYCLE);
+                        compileTask.getLogging().captureStandardError(LogLevel.LIFECYCLE);
                         return compileTask;
                     }
-                ));
+                ).get());
                 task.getFregeCompilerJar().set(
                     setupFregeCompilerTask.get().getFregeCompilerOutputPath());
                 task.getFregeOutputDir().set(extension.getOutputDir());
