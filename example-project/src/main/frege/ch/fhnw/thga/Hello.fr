@@ -1,0 +1,4 @@
+module ch.fhnw.thga.Hello where
+
+main = do
+  println "Hello"

@@ -11,7 +11,6 @@ import javax.inject.Inject;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.file.RegularFileProperty;
-import org.gradle.api.logging.LogLevel;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
@@ -22,6 +21,7 @@ import org.gradle.api.tasks.InputDirectory;
 import org.gradle.api.tasks.InputFile;
 import org.gradle.api.tasks.Internal;
 import org.gradle.api.tasks.JavaExec;
+import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.PathSensitive;
 import org.gradle.api.tasks.PathSensitivity;
@@ -48,6 +48,7 @@ public abstract class CompileFregeTask extends DefaultTask {
     public abstract Property<String> getFregeDependencies();
 
     @Input
+    @Optional
     @Option(option = "compileItem",
            description = "The absolute path to the frege file or the module name"
     )
@@ -69,11 +70,8 @@ public abstract class CompileFregeTask extends DefaultTask {
     @Internal
     public final Provider<List<String>> getCompileItems() {
         return getFregeCompileItem()
-            .map(name ->
-            {
-                return name.isEmpty() ? getFregeSourceFiles().get()
-                                      : List.of(name);
-            });
+            .map(name -> List.of(name))
+            .orElse(getFregeSourceFiles());
     }
 
     @Internal
@@ -116,7 +114,6 @@ public abstract class CompileFregeTask extends DefaultTask {
     @TaskAction
     public void compileFrege()
     {
-        this.getLogging().captureStandardOutput(LogLevel.LIFECYCLE);
         List<String> targetDirectoryArg = List.of(
             "-d",
             getFregeOutputDir().getAsFile().get().getAbsolutePath()
@@ -124,7 +121,6 @@ public abstract class CompileFregeTask extends DefaultTask {
         javaExec.setClasspath(
             getProject()
             .files(getFregeCompilerJar()))
-            .setErrorOutput(System.out)
             .setArgs(buildCompilerArgsFromProperties(targetDirectoryArg))
             .exec();
     }
