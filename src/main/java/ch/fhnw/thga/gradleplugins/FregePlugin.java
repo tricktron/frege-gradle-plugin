@@ -1,6 +1,7 @@
 package ch.fhnw.thga.gradleplugins;
 
 import org.gradle.api.Plugin;
+import org.gradle.api.plugins.BasePlugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.logging.LogLevel;
@@ -28,6 +29,8 @@ public class FregePlugin implements Plugin<Project>
                                        .create(
                                        FREGE_EXTENSION_NAME,
                                        FregeExtension.class);
+        
+        project.getPlugins().apply(BasePlugin.class);
 
         TaskProvider<SetupFregeTask> setupFregeCompilerTask =
             project.getTasks().register(

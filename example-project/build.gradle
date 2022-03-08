@@ -1,5 +1,5 @@
 plugins {
-    id 'ch.fhnw.thga.frege' version '1.7.1-alpha'
+    id 'ch.fhnw.thga.frege' version '1.8.0-alpha'
 }
 
 frege {
