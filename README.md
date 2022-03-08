@@ -6,7 +6,7 @@ Simplifies setting up your Frege project.
 
 ## Installation
 
-You need `java >= 11`.
+You need `java >= 11` and `gradle >= 7`.
 
 ```bash
 git clone https://github.com/tricktron/frege-gradle-plugin.git
@@ -14,16 +14,28 @@ git clone https://github.com/tricktron/frege-gradle-plugin.git
 ```
 
 ## How to Use
-1. Specify the frege compiler release, version, main module and repl source 
+1. Specify the frege compiler release, version, main module and repl module 
 file in your `build.gradle`:
 
 ```groovy
-frege {
-    version = '3.25.84'
-    release = '3.25alpha'
-    mainModule = 'my.mod.Name' // see runFrege task
-    replModule = 'my.mod.Name' // see replFrege task
+plugins
+{
+    id 'ch.fhnw.thga.frege' version '1.9.0-alpha'
 }
+
+frege 
+{
+    version    = '3.25.84'
+    release    = '3.25alpha'
+    mainModule = 'examples.HelloFrege' // see runFrege task
+    replModule = 'examples.HelloFrege' // see replFrege task
+}
+```
+
+Then run
+```bash
+gradle initFrege
+gradle runFrege
 ```
 
 See the [Frege Releases](https://github.com/Frege/frege/releases) for all available versions.
@@ -37,6 +49,9 @@ Optional configuration parameters inside `build.gradle`:
 ### Added Tasks
 
 - **setupFrege**: Downloads the specified version of the Frege compiler.
+- **initFrege**: Creates a default `HelloFrege.fr` example file under
+ `mainSource/examples/HelloFrege.fr`. Alternatively, you can specify the location
+ on the command line with `--mainModule=my.mod.HelloFrege`.
 - **compileFrege**: Compiles all your `*.fr` files in `mainSourceDir` to `outputDir`.
 Alternatively, you can also pass the compile item by command line. Then only the
 compile item and its dependencies get compiled. 

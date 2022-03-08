@@ -4,7 +4,7 @@ import static ch.fhnw.thga.gradleplugins.FregeExtension.DEFAULT_RELATIVE_SOURCE_
 import static ch.fhnw.thga.gradleplugins.FregePlugin.REPL_FREGE_TASK_NAME;
 import static ch.fhnw.thga.gradleplugins.SharedFunctionalTestLogic.COMPLETION_FR;
 import static ch.fhnw.thga.gradleplugins.SharedFunctionalTestLogic.MINIMAL_BUILD_FILE_CONFIG;
-import static ch.fhnw.thga.gradleplugins.SharedFunctionalTestLogic.NEW_LINE;
+import static ch.fhnw.thga.gradleplugins.SharedTaskLogic.NEW_LINE;
 import static ch.fhnw.thga.gradleplugins.SharedFunctionalTestLogic.assertFileDoesNotExist;
 import static ch.fhnw.thga.gradleplugins.SharedFunctionalTestLogic.assertFileExists;
 import static ch.fhnw.thga.gradleplugins.SharedFunctionalTestLogic.createFregeSection;

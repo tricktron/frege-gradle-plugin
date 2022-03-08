@@ -1,10 +1,10 @@
 package ch.fhnw.thga.gradleplugins;
 
 import org.gradle.api.Plugin;
-import org.gradle.api.plugins.BasePlugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.logging.LogLevel;
+import org.gradle.api.plugins.BasePlugin;
 import org.gradle.api.tasks.TaskProvider;
 
 public class FregePlugin implements Plugin<Project>
@@ -13,7 +13,7 @@ public class FregePlugin implements Plugin<Project>
     public static final String COMPILE_FREGE_TASK_NAME    = "compileFrege";
     public static final String RUN_FREGE_TASK_NAME        = "runFrege";
     public static final String REPL_FREGE_TASK_NAME       = "replFrege";
-    public static final String DEPS_FREGE_TASK_NAME       = "depsFrege";
+    public static final String INIT_FREGE_TASK_NAME       = "initFrege";
     public static final String FREGE_PLUGIN_ID            = "ch.fhnw.thga.frege";
     public static final String FREGE_EXTENSION_NAME       = "frege";
     public static final String FREGE_IMPLEMENTATION_SCOPE = "implementation";
@@ -31,6 +31,16 @@ public class FregePlugin implements Plugin<Project>
                                        FregeExtension.class);
         
         project.getPlugins().apply(BasePlugin.class);
+
+        project.getTasks().register(
+            INIT_FREGE_TASK_NAME,
+            InitFregeTask.class,
+            task ->
+            {
+                task.getFregeMainSourceDir().set(extension.getMainSourceDir());
+                task.getFregeModuleName().set("examples.HelloFrege");
+            }
+        );
 
         TaskProvider<SetupFregeTask> setupFregeCompilerTask =
             project.getTasks().register(
