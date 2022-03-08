@@ -1,0 +1,27 @@
+module ch.fhnw.thga.HelloFrege where
+
+import Test.QuickCheck
+
+--- compute digit sum
+digitSum :: Integer -> Integer
+digitSum 0 = 0
+digitSum n = (n `rem` 10) + digitSum (n `div` 10)
+
+--- compute the reduced digit sum
+reducedDigitSum :: Integer -> Integer
+reducedDigitSum n = if n < 10 then n else reducedDigitSum $ digitSum n
+
+main = do
+    let answer = digitSum 6666666
+    println $
+        "The answer to life, the universe and everything is "
+        ++ show answer
+        ++ "."
+
+{--
+    The property 'p_reduced_digit_sum_of_multiple_of_9_is_always_9' checks
+    the famous claim that every multiple of 9 number has also the reduced
+    digit sum of 9, e.g. 9, 27, 36, ...
+-}
+p_reduced_digit_sum_of_multiple_of_9_is_always_9 = 
+    property $ \(n :: Integer) -> (n > 0) ==> (reducedDigitSum $ 9 * n) == 9

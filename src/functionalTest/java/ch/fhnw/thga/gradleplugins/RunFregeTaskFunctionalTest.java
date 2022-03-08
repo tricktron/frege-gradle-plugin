@@ -2,7 +2,7 @@ package ch.fhnw.thga.gradleplugins;
 
 import static ch.fhnw.thga.gradleplugins.FregeExtension.DEFAULT_RELATIVE_SOURCE_DIR;
 import static ch.fhnw.thga.gradleplugins.FregePlugin.RUN_FREGE_TASK_NAME;
-import static ch.fhnw.thga.gradleplugins.SharedFunctionalTestLogic.NEW_LINE;
+import static ch.fhnw.thga.gradleplugins.SharedTaskLogic.NEW_LINE;
 import static ch.fhnw.thga.gradleplugins.SharedFunctionalTestLogic.createFregeSection;
 import static ch.fhnw.thga.gradleplugins.SharedFunctionalTestLogic.runAndFailGradleTask;
 import static ch.fhnw.thga.gradleplugins.SharedFunctionalTestLogic.runGradleTask;
