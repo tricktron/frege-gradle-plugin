@@ -15,6 +15,7 @@ public final class SharedTaskLogic
     private SharedTaskLogic() {};
 
     public static final String NEW_LINE = System.lineSeparator();
+    public static final String EMPTY_LINE = "";
 
     public static final Provider<FileCollection> setupClasspath(
         Project project,
