@@ -1,6 +1,7 @@
 package ch.fhnw.thga.gradleplugins;
 
 import static ch.fhnw.thga.gradleplugins.SharedTaskLogic.NEW_LINE;
+import static ch.fhnw.thga.gradleplugins.SharedTaskLogic.EMPTY_LINE;
 
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -19,7 +20,6 @@ import org.gradle.api.tasks.options.Option;
 
 public abstract class InitFregeTask extends DefaultTask
 {
-    private static final String EMPTY_LINE = "";
     private static final String HELLO_FREGE_CODE_WITHOUT_MODULE = String.join(NEW_LINE,
         "import Test.QuickCheck",
         EMPTY_LINE,

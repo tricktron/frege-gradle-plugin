@@ -9,14 +9,18 @@ import org.gradle.api.tasks.TaskProvider;
 
 public class FregePlugin implements Plugin<Project>
 {
-    public static final String SETUP_FREGE_TASK_NAME      = "setupFrege";
-    public static final String COMPILE_FREGE_TASK_NAME    = "compileFrege";
-    public static final String RUN_FREGE_TASK_NAME        = "runFrege";
-    public static final String REPL_FREGE_TASK_NAME       = "replFrege";
-    public static final String INIT_FREGE_TASK_NAME       = "initFrege";
-    public static final String FREGE_PLUGIN_ID            = "ch.fhnw.thga.frege";
-    public static final String FREGE_EXTENSION_NAME       = "frege";
-    public static final String FREGE_IMPLEMENTATION_SCOPE = "implementation";
+    public static final String SETUP_FREGE_TASK_NAME              = "setupFrege";
+    public static final String COMPILE_FREGE_TASK_NAME            = "compileFrege";
+    public static final String RUN_FREGE_TASK_NAME                = "runFrege";
+    public static final String TEST_FREGE_TASK_NAME               = "testFrege";
+    public static final String REPL_FREGE_TASK_NAME               = "replFrege";
+    public static final String INIT_FREGE_TASK_NAME               = "initFrege";
+    public static final String FREGE_PLUGIN_ID                    = "ch.fhnw.thga.frege";
+    public static final String FREGE_EXTENSION_NAME               = "frege";
+    public static final String FREGE_IMPLEMENTATION_SCOPE         = "implementation";
+    public static final String HELLO_FREGE_DEFAULT_MODULE_NAME    = "examples.HelloFrege";
+    public static final String FREGE_TEST_MODULE_NAME             = "frege.tools.Quick";
+    public static final String FREGE_TEST_DEFAULT_ARGS            = "-v";
 
     @Override
     public void apply(Project project) {
@@ -38,7 +42,7 @@ public class FregePlugin implements Plugin<Project>
             task ->
             {
                 task.getFregeMainSourceDir().set(extension.getMainSourceDir());
-                task.getFregeModuleName().set("examples.HelloFrege");
+                task.getFregeModuleName().set(HELLO_FREGE_DEFAULT_MODULE_NAME);
             }
         );
 
@@ -88,6 +92,27 @@ public class FregePlugin implements Plugin<Project>
                 task.getFregeDependencies().set(implementation.getAsPath());
             }
         );
+        
+        project.getTasks().register(
+            TEST_FREGE_TASK_NAME,
+            TestFregeTask.class,
+            task ->
+                {
+                    task.getMainModule().set(extension.getMainModule());
+                    task.dependsOn(compileFregeTask.map(
+                        compileTask ->
+                        {
+                            compileTask.getFregeCompileItem().set(task.getMainModule());
+                            return compileTask;
+                        }
+                    ).get());
+                    task.getFregeCompilerJar().set(
+                        setupFregeCompilerTask.get().getFregeCompilerOutputPath());
+                    task.getFregeOutputDir().set(extension.getOutputDir());
+                    task.getFregeDependencies().set(implementation.getAsPath());
+                    task.getFregeArgs().set(FREGE_TEST_DEFAULT_ARGS);
+                }
+            );
 
         project.getTasks().register(
             REPL_FREGE_TASK_NAME,

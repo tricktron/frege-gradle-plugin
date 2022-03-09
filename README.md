@@ -50,7 +50,7 @@ Optional configuration parameters inside `build.gradle`:
 
 - **setupFrege**: Downloads the specified version of the Frege compiler.
 - **initFrege**: Creates a default `HelloFrege.fr` example file under
- `mainSource/examples/HelloFrege.fr`. Alternatively, you can specify the location
+ `mainSourceDir/examples/HelloFrege.fr`. Alternatively, you can specify the location
  on the command line with `--mainModule=my.mod.HelloFrege`.
 - **compileFrege**: Compiles all your `*.fr` files in `mainSourceDir` to `outputDir`.
 Alternatively, you can also pass the compile item by command line. Then only the
@@ -58,6 +58,9 @@ compile item and its dependencies get compiled.
 E.g.: `gradle compileFrege --compileItem=[full module name | absolute path to .fr file]`.
 - **runFrege**: Runs the Frege module specified by `mainModule`. Alternatively you can
 also pass the main module by command line, e.g: `gradle runFrege --mainModule=my.mod.Name`.
+- **testFrege**: Tests all QuickCheck properties defined in the specified `mainModule`.
+You can pass test args on the command line, e.g: `gradle testFrege --args="-v -n 1000 -p pred1`.
+Run `gradle testFrege --args=-h` to see all options.
 - **replFrege**: Takes care of all project dependencies of the specified `replModule`
 and prints the command to start the Frege REPL and load the `replModule`. 
 E.g.: `(echo :l <path to replModule.fr> && cat) | java -cp <your-correct-classpath-with-all-dependencies> frege.repl.FregeRepl`.
@@ -87,4 +90,4 @@ cache by setting `org.gradle.caching=true` in your `gradle.properites`.
 
 
 ## How to Contribute
-Try to add another task, e.g. `fregeDoc` to the [FregePluginFunctionalTest.java](src/functionalTest/java/ch/fhnw/thga/gradleplugins/FregePluginFunctionalTest.java) file and try to make the test pass.
+Try to add another task, e.g. `docFrege` to the [FregePluginFunctionalTest.java](src/functionalTest/java/ch/fhnw/thga/gradleplugins/FregePluginFunctionalTest.java) file and try to make the test pass.
