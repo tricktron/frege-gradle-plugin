@@ -1,5 +1,6 @@
 package ch.fhnw.thga.gradleplugins;
 
+import org.gradle.api.NamedDomainObjectProvider;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
@@ -17,22 +18,30 @@ public class FregePlugin implements Plugin<Project>
     public static final String INIT_FREGE_TASK_NAME               = "initFrege";
     public static final String FREGE_PLUGIN_ID                    = "ch.fhnw.thga.frege";
     public static final String FREGE_EXTENSION_NAME               = "frege";
-    public static final String FREGE_IMPLEMENTATION_SCOPE         = "implementation";
+    public static final String FREGE_CONFIGURATION_NAME           = FREGE_EXTENSION_NAME;
     public static final String HELLO_FREGE_DEFAULT_MODULE_NAME    = "examples.HelloFrege";
     public static final String FREGE_TEST_MODULE_NAME             = "frege.tools.Quick";
     public static final String FREGE_TEST_DEFAULT_ARGS            = "-v";
 
     @Override
-    public void apply(Project project) {
-        Configuration implementation = project
-                                       .getConfigurations()
-                                       .create(FREGE_IMPLEMENTATION_SCOPE);
+    public void apply(Project project)
+    {
+        NamedDomainObjectProvider<Configuration> fregeConfiguration = project
+            .getConfigurations()
+            .register(
+                FREGE_CONFIGURATION_NAME,
+                config ->
+                    {
+                        config.setCanBeResolved(true);
+                        config.setCanBeConsumed(true);
+                    }
+            );
 
-        FregeExtension extension     = project
-                                       .getExtensions()
-                                       .create(
-                                       FREGE_EXTENSION_NAME,
-                                       FregeExtension.class);
+        FregeExtension extension = project
+            .getExtensions()
+            .create(
+            FREGE_EXTENSION_NAME,
+            FregeExtension.class);
         
         project.getPlugins().apply(BasePlugin.class);
 
@@ -69,7 +78,7 @@ public class FregePlugin implements Plugin<Project>
                     task.getFregeMainSourceDir().set(extension.getMainSourceDir());
                     task.getFregeOutputDir().set(extension.getOutputDir());
                     task.getFregeCompilerFlags().set(extension.getCompilerFlags());
-                    task.getFregeDependencies().set(implementation.getAsPath());
+                    task.getFregeDependencies().set(fregeConfiguration.get().getAsPath());
                 }
             );
 
@@ -89,7 +98,7 @@ public class FregePlugin implements Plugin<Project>
                 task.getFregeCompilerJar().set(
                     setupFregeCompilerTask.get().getFregeCompilerOutputPath());
                 task.getFregeOutputDir().set(extension.getOutputDir());
-                task.getFregeDependencies().set(implementation.getAsPath());
+                task.getFregeDependencies().set(fregeConfiguration.get().getAsPath());
             }
         );
         
@@ -109,7 +118,7 @@ public class FregePlugin implements Plugin<Project>
                     task.getFregeCompilerJar().set(
                         setupFregeCompilerTask.get().getFregeCompilerOutputPath());
                     task.getFregeOutputDir().set(extension.getOutputDir());
-                    task.getFregeDependencies().set(implementation.getAsPath());
+                    task.getFregeDependencies().set(fregeConfiguration.get().getAsPath());
                     task.getFregeArgs().set(FREGE_TEST_DEFAULT_ARGS);
                 }
             );
@@ -132,7 +141,7 @@ public class FregePlugin implements Plugin<Project>
                 task.getFregeCompilerJar().set(
                     setupFregeCompilerTask.get().getFregeCompilerOutputPath());
                 task.getFregeOutputDir().set(extension.getOutputDir());
-                task.getFregeDependencies().set(implementation.getAsPath());
+                task.getFregeDependencies().set(fregeConfiguration.get().getAsPath());
                 task.getFregeMainSourceDir().set(extension.getMainSourceDir());
             }
         );
