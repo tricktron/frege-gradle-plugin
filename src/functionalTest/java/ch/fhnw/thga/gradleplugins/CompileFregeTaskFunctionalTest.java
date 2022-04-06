@@ -72,6 +72,7 @@ public class CompileFregeTaskFunctionalTest
                 "build/classes/main/frege/ch/fhnw/thga/Completion.class"
             );
         }
+
         @Test
         void given_frege_code_and_many_compiler_flags(
             @TempDir File testProjectDir)
@@ -113,6 +114,7 @@ public class CompileFregeTaskFunctionalTest
                 "build/classes/main/frege/ch/fhnw/thga/Completion.class"
             );
         }
+
         @Test
         void given_frege_code_in_custom_source_and_output_dir_and_minimal_build_file_config(
             @TempDir File testProjectDir)
@@ -156,6 +158,7 @@ public class CompileFregeTaskFunctionalTest
                 "build/frege/ch/fhnw/thga/Completion.class"
             );
         }
+
         @Test
         void and_is_up_to_date_given_no_code_changes(
             @TempDir File testProjectDir)
@@ -180,6 +183,7 @@ public class CompileFregeTaskFunctionalTest
                 UP_TO_DATE,
                 second.task(":" + COMPILE_FREGE_TASK_NAME).getOutcome());
         }
+        
         @Test
         void and_is_cached_given_cache_hit(
             @TempDir File testProjectDir) 
@@ -249,6 +253,7 @@ public class CompileFregeTaskFunctionalTest
                 FROM_CACHE, 
                 third.task(":" + COMPILE_FREGE_TASK_NAME).getOutcome());
         }
+        
         @Test
         void given_two_dependent_frege_files_in_default_source_dir_and_minimal_build_file_config(
             @TempDir File testProjectDir)
@@ -264,6 +269,7 @@ public class CompileFregeTaskFunctionalTest
                 "frob i = complete $ i + i",
                 NEW_LINE
             );
+            
             Project project = FregeProjectBuilder
                 .builder()
                 .projectRoot(testProjectDir)
@@ -311,6 +317,7 @@ public class CompileFregeTaskFunctionalTest
             );
         }
     }
+
     @Nested
     @IndicativeSentencesGeneration(
         separator = " -> ",
@@ -351,6 +358,7 @@ public class CompileFregeTaskFunctionalTest
                 result.task(":" + COMPILE_FREGE_TASK_NAME).getOutcome()
             );
         }
+        
         @Test
         void given_two_dependent_frege_files_in_default_source_dir_and_without_make_compiler_flag(
             @TempDir File testProjectDir)
@@ -401,6 +409,62 @@ public class CompileFregeTaskFunctionalTest
             );
             assertEquals(
                 FAILED, 
+                result.task(":" + COMPILE_FREGE_TASK_NAME).getOutcome()
+            );
+        }
+
+        @Test
+        void given_wrong_main_source_dir_when_searching_for_dependent_frege_module(
+            @TempDir File testProjectDir)
+            throws Exception
+        {
+            String codeImportingDependentModule = String.join(
+                NEW_LINE,
+                "module ch.fhnw.thga.Frob where",
+                NEW_LINE,
+                NEW_LINE,
+                "import ch.fhnw.thga.Completion (complete)",
+                NEW_LINE,
+                "frob i = complete $ i + i",
+                NEW_LINE
+            );
+
+            String wrongMainSourceDirBuildFileConfig = createFregeSection(
+                FregeDTOBuilder
+                .builder()
+                .version("'3.25.84'")
+                .release("'3.25alpha'")
+                .mainSourceDir("layout.projectDirectory")
+                .build()
+            );
+            
+            Project project = FregeProjectBuilder
+                .builder()
+                .projectRoot(testProjectDir)
+                .buildFile(wrongMainSourceDirBuildFileConfig)
+                .fregeSourceFiles(() -> Stream.of(COMPLETION_FR, new FregeSourceFile(
+                    String.format(
+                        "%s/%s",
+                        DEFAULT_RELATIVE_SOURCE_DIR,
+                        "ch/fhnw/thga/Frob.fr"
+                    ),
+                    codeImportingDependentModule)))
+                .build();
+            
+            BuildResult result = runAndFailGradleTask(
+                testProjectDir,
+                COMPILE_FREGE_TASK_NAME,
+                "--compileItem=ch.fhnw.thga.Frob"
+            );
+
+            assertTrue(
+                project
+                .getTasks()
+                .getByName(COMPILE_FREGE_TASK_NAME) 
+                instanceof CompileFregeTask
+            );
+            assertEquals(
+                FAILED,
                 result.task(":" + COMPILE_FREGE_TASK_NAME).getOutcome()
             );
         }
