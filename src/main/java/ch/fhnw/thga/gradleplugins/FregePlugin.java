@@ -3,9 +3,12 @@ package ch.fhnw.thga.gradleplugins;
 import org.gradle.api.NamedDomainObjectProvider;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.api.Task;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.logging.LogLevel;
 import org.gradle.api.plugins.BasePlugin;
+import org.gradle.api.plugins.JavaPluginExtension;
+import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskProvider;
 
 public class FregePlugin implements Plugin<Project>
@@ -160,6 +163,18 @@ public class FregePlugin implements Plugin<Project>
         );
         project.afterEvaluate(ignored -> {
             project.getDependencies().add("implementation", setupFregeCompilerTask.map(SetupFregeTask::getFregeCompilerOutputPath).map(project::files));
+
+            JavaPluginExtension javaPluginExtension = project.getExtensions().findByType(JavaPluginExtension.class);
+            if(javaPluginExtension != null) {
+                SourceSet main = javaPluginExtension.getSourceSets().findByName("main");
+                if(main != null) {
+                    main.getOutput().dir(compileFregeTask.get().getOutputs());
+                }
+            }
+            Task classes = project.getTasks().findByName("classes");
+            if(classes != null) {
+                classes.dependsOn(compileFregeTask);
+            }
         });
     }
 }
