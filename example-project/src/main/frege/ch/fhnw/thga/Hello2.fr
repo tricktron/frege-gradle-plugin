@@ -1,0 +1,4 @@
+module ch.fhnw.thga.Hello2 where
+
+main args = do
+    putStrLn "Hello from File 2"

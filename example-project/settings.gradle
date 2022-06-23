@@ -1,8 +1,13 @@
 pluginManagement {
-    repositories {
-        mavenLocal()
-        gradlePluginPortal()
+    resolutionStrategy {
+        eachPlugin {
+            if (requested.id.id == "ch.fhnw.thga.frege") {
+                var x = new Properties()
+                x.load(new FileInputStream(file("../gradle.properties")))
+                useVersion(x.get("version"))
+            }
+        }
     }
 }
-
 rootProject.name = 'example-project'
+includeBuild("..")
