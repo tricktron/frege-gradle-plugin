@@ -20,7 +20,7 @@ file in your `build.gradle`:
 ```groovy
 plugins
 {
-    id 'ch.fhnw.thga.frege' version '4.0.0-alpha'
+    id 'ch.fhnw.thga.frege' version '4.0.1-alpha'
 }
 
 frege 
