@@ -14,7 +14,7 @@ dependencies
     def junit5Group   = 'org.junit.jupiter'
     def junit5Version = '5.8.2'
     testImplementation group: junit5Group,          name: 'junit-jupiter-api',      version: junit5Version
-    testImplementation group: 'net.jqwik',          name: 'jqwik',                  version: '1.6.3'
+    testImplementation group: 'net.jqwik',          name: 'jqwik',                  version: '1.6.5'
     testRuntimeOnly    group: junit5Group,          name: 'junit-jupiter-engine',   version: junit5Version
     testImplementation(enforcedPlatform("org.junit:junit-bom:${junit5Version}"))
 }
