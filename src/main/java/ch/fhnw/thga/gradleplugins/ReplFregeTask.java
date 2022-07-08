@@ -107,4 +107,4 @@ public abstract class ReplFregeTask extends DefaultTask
             )
         );
     }
-q
+}

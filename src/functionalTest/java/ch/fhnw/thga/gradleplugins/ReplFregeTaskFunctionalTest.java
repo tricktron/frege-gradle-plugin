@@ -34,61 +34,70 @@ import ch.fhnw.thga.gradleplugins.fregeproject.FregeSourceFile;
 public class ReplFregeTaskFunctionalTest
 {
     @Nested
-    @IndicativeSentencesGeneration(
-        generator = DisplayNameGenerator.ReplaceUnderscores.class)
+    @IndicativeSentencesGeneration
+    (generator = DisplayNameGenerator.ReplaceUnderscores.class)
     class Repl_frege_task_works
     {
         @Test
-        void given_minimal_build_file_config_with_repl_module(
-            @TempDir File testProjectDir)
+        void given_minimal_build_file_config_with_repl_module
+            (@TempDir File testProjectDir)
             throws Exception
         {
-            String replModuleConfig = createFregeSection(
+            String replModuleConfig = createFregeSection
+            (
                 FregeDTOBuilder
-                .builder()
-                .version("'3.25.84'")
-                .release("'3.25alpha'")
+                .latestVersionBuilder()
                 .replModule("'ch.fhnw.thga.Completion'")
                 .build()
             );
             Project project = FregeProjectBuilder
-                .builder()
-                .projectRoot(testProjectDir)
-                .buildFile(replModuleConfig)
-                .fregeSourceFiles(() -> Stream.of(COMPLETION_FR))
-                .build();
+            .builder()
+            .projectRoot(testProjectDir)
+            .buildFile(replModuleConfig)
+            .fregeSourceFiles(() -> Stream.of(COMPLETION_FR))
+            .build();
                                                                                          
             BuildResult result = runGradleTask(testProjectDir, REPL_FREGE_TASK_NAME);
                                                                                          
-            assertTrue(
+            assertTrue
+            (
                 project
                 .getTasks()
                 .getByName(REPL_FREGE_TASK_NAME)
-                instanceof ReplFregeTask);
-            assertEquals(
+                instanceof ReplFregeTask
+            );
+            assertEquals
+            (
                 SUCCESS,
-                result.task(":" + REPL_FREGE_TASK_NAME).getOutcome());
+                result.task(":" + REPL_FREGE_TASK_NAME).getOutcome()
+            );
             assertTrue(result.getOutput().contains("java -cp"));
             assertTrue(result.getOutput().contains("frege3.25.84.jar"));
-            assertTrue(result.getOutput().contains(
-                Paths.get(COMPLETION_FR.getFregeModulePath()).normalize().toString())
+            assertTrue
+            (
+                result
+                .getOutput()
+                .contains(Paths.get(COMPLETION_FR.getFregeModulePath()).normalize().toString())
             );
-            assertFileDoesNotExist(
+            assertFileDoesNotExist
+            (
                 testProjectDir,
                 "build/classes/main/frege/ch/fhnw/thga/Completion.java"
             );
-            assertFileDoesNotExist(
+            assertFileDoesNotExist
+            (
                 testProjectDir,
                 "build/classes/main/frege/ch/fhnw/thga/Completion.class"
             );
         }
 
         @Test
-        void given_dependent_frege_files_with_command_line_repl_module_option(
-            @TempDir File testProjectDir)
+        void given_dependent_frege_files_with_command_line_repl_module_option
+            (@TempDir File testProjectDir)
             throws Exception
         {
-            String frobCode = String.join(
+            String frobCode = String.join
+            (
                 NEW_LINE,
                 "module ch.fhnw.thga.Frob where",
                 NEW_LINE,
@@ -98,74 +107,158 @@ public class ReplFregeTaskFunctionalTest
                 "frob i = complete $ i + i",
                 NEW_LINE
             );
-            FregeSourceFile frob_FR = new FregeSourceFile(
-                String.format(
+            FregeSourceFile frob_FR = new FregeSourceFile
+            (
+                String.format
+                (
                     "%s/%s",
                     DEFAULT_RELATIVE_SOURCE_DIR,
                     "ch/fhnw/thga/Frob.fr"
                 ),
-                frobCode);
+                frobCode
+            );
             Project project = FregeProjectBuilder
-                .builder()
-                .projectRoot(testProjectDir)
-                .buildFile(MINIMAL_BUILD_FILE_CONFIG)
-                .fregeSourceFiles(() -> Stream.of(COMPLETION_FR, frob_FR))
-                .build();
+            .builder()
+            .projectRoot(testProjectDir)
+            .buildFile(MINIMAL_BUILD_FILE_CONFIG)
+            .fregeSourceFiles(() -> Stream.of(COMPLETION_FR, frob_FR))
+            .build();
             
-            BuildResult result = runGradleTask(
+            BuildResult result = runGradleTask
+            (
                 testProjectDir,
                 REPL_FREGE_TASK_NAME,
                 "--replModule=ch.fhnw.thga.Frob"
             );
             
-            assertTrue(
+            assertTrue
+            (
                 project
                 .getTasks()
                 .getByName(REPL_FREGE_TASK_NAME)
-                instanceof ReplFregeTask);
-            assertEquals(
+                instanceof ReplFregeTask
+            );
+            assertEquals
+            (
                 SUCCESS,
-                result.task(":" + REPL_FREGE_TASK_NAME).getOutcome());
+                result.task(":" + REPL_FREGE_TASK_NAME).getOutcome()
+            );
             assertTrue(result.getOutput().contains("java -cp"));
             assertTrue(result.getOutput().contains("frege3.25.84.jar"));
-            assertTrue(result.getOutput().contains(
-                Paths.get(frob_FR.getFregeModulePath()).normalize().toString())
+            assertTrue
+            (
+                result
+                .getOutput()
+                .contains(Paths.get(frob_FR.getFregeModulePath()).normalize().toString())
             );
-            assertFileExists(
+            assertFileExists
+            (
                 testProjectDir,
                 "build/classes/main/frege/ch/fhnw/thga/Completion.java"
             );
-            assertFileExists(
+            assertFileExists
+            (
                 testProjectDir,
                 "build/classes/main/frege/ch/fhnw/thga/Completion.class"
             );
-            assertFileDoesNotExist(
+            assertFileDoesNotExist
+            (
                 testProjectDir,
                 "build/classes/main/frege/ch/fhnw/thga/Frob.java"
             );
-            assertFileDoesNotExist(
+            assertFileDoesNotExist
+            (
                 testProjectDir,
                 "build/classes/main/frege/ch/fhnw/thga/Frob.class"
+            );
+        }
+        @Test
+        void given_a_correct_repl_module_and_an_indepedent_frege_file_with_errors
+            (@TempDir File testProjectDir)
+            throws Exception
+        {
+            String frobWithErrors = String.join
+            (
+                NEW_LINE,
+                "module ch.fhnw.thga.FrobWithErrors where",
+                NEW_LINE,
+                NEW_LINE,
+                "errAddingIntWithString = 42 + \"42\"",
+                NEW_LINE
+            );
+            FregeSourceFile frobWithErrors_FR = new FregeSourceFile
+            (
+                String.format
+                (
+                    "%s/%s",
+                    DEFAULT_RELATIVE_SOURCE_DIR,
+                    "ch/fhnw/thga/FrobWithErrors.fr"
+                ),
+                frobWithErrors
+            );
+            Project project = FregeProjectBuilder
+            .builder()
+            .projectRoot(testProjectDir)
+            .buildFile(MINIMAL_BUILD_FILE_CONFIG)
+            .fregeSourceFiles(() -> Stream.of(COMPLETION_FR, frobWithErrors_FR))
+            .build();
+            
+            BuildResult result = runGradleTask
+            (
+                testProjectDir,
+                REPL_FREGE_TASK_NAME,
+                "--replModule=ch.fhnw.thga.Completion"
+            );
+            
+            assertTrue
+            (
+                project
+                .getTasks()
+                .getByName(REPL_FREGE_TASK_NAME)
+                instanceof ReplFregeTask
+            );
+            assertEquals
+            (
+                SUCCESS,
+                result.task(":" + REPL_FREGE_TASK_NAME).getOutcome()
+            );
+            assertTrue(result.getOutput().contains("java -cp"));
+            assertTrue(result.getOutput().contains("frege3.25.84.jar"));
+            assertTrue
+            (
+                result
+                .getOutput()
+                .contains(Paths.get(COMPLETION_FR.getFregeModulePath()).normalize().toString())
+            );
+            assertFileDoesNotExist
+            (
+                testProjectDir,
+                "build/classes/main/frege/ch/fhnw/thga/Completion.java"
+            );
+            assertFileDoesNotExist
+            (
+                testProjectDir,
+                "build/classes/main/frege/ch/fhnw/thga/Completion.class"
             );
         }
     }
 
     @Nested
-    @IndicativeSentencesGeneration(
-        generator = DisplayNameGenerator.ReplaceUnderscores.class)
+    @IndicativeSentencesGeneration
+    (generator = DisplayNameGenerator.ReplaceUnderscores.class)
     class Repl_frege_task_fails
     {
         @Test
-        void given_minimal_build_file_config_without_repl_module(
-            @TempDir File testProjectDir)
+        void given_minimal_build_file_config_without_repl_module
+            (@TempDir File testProjectDir)
             throws Exception
         {
             Project project = FregeProjectBuilder
-                .builder()
-                .projectRoot(testProjectDir)
-                .buildFile(MINIMAL_BUILD_FILE_CONFIG)
-                .fregeSourceFiles(() -> Stream.of(COMPLETION_FR))
-                .build();
+            .builder()
+            .projectRoot(testProjectDir)
+            .buildFile(MINIMAL_BUILD_FILE_CONFIG)
+            .fregeSourceFiles(() -> Stream.of(COMPLETION_FR))
+            .build();
                                                                                          
             BuildResult result = runAndFailGradleTask
             (
