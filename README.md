@@ -20,7 +20,7 @@ file in your `build.gradle`:
 ```groovy
 plugins
 {
-    id 'ch.fhnw.thga.frege' version '3.0.0-alpha'
+    id 'ch.fhnw.thga.frege' version '4.0.0-alpha'
 }
 
 frege 
@@ -46,6 +46,7 @@ Optional configuration parameters inside `build.gradle`:
 - outputDir          : defaults to `<projectRoot>/build/classes/main/frege`
 - compilerFlags      : defaults to `['-O', '-make']`
 - compileItems       : defaults to `[]`
+- testModules        : defaults to `[]`
 
 ### Added Tasks
 
@@ -59,7 +60,7 @@ Then only the specified compile items and its dependencies get compiled.
 E.g.: `compileItems = [ 'my.mod.Mod1', my.mod.Mod2' ]`.
 - **runFrege**: Runs the Frege module specified by `mainModule`. Alternatively you can
 also pass the main module by command line, e.g: `gradle runFrege --mainModule=my.mod.Name`.
-- **testFrege**: Tests all QuickCheck properties defined in the specified `mainModule`.
+- **testFrege**: Tests all QuickCheck properties defined in the specified `testModules`.
 You can pass test args on the command line, e.g: `gradle testFrege --args="-v -n 1000 -p pred1`.
 Run `gradle testFrege --args=-h` to see all options.
 - **replFrege**: Takes care of all project dependencies of the specified `replModule`
