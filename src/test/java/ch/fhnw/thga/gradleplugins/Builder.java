@@ -1,6 +1,7 @@
 package ch.fhnw.thga.gradleplugins;
 
-public interface Builder {
+public interface Builder 
+{
     Builder version(String version);
 
     Builder release(String release);
@@ -16,6 +17,8 @@ public interface Builder {
     Builder compilerFlags(String compilerFlags);
 
     Builder replModule(String replModule);
+    
+    Builder compileItems(String compileItems);
 
     FregeDTO build();
 }

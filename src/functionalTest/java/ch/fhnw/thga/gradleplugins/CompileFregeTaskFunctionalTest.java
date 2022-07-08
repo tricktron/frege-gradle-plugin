@@ -37,177 +37,199 @@ public class CompileFregeTaskFunctionalTest
         separator = " -> ",
         generator = DisplayNameGenerator.ReplaceUnderscores.class
     )
-    class Compile_frege_task_works {
-
+    class Compile_frege_task_works 
+    {
         @Test
-        void given_frege_code_in_default_source_dir_and_minimal_build_file_config(
-            @TempDir File testProjectDir)
-            throws Exception
+        void given_frege_code_in_default_source_dir_and_minimal_build_file_config
+            (@TempDir File testProjectDir) throws Exception
         {
             Project project = FregeProjectBuilder
-                .builder()
-                .projectRoot(testProjectDir)
-                .buildFile(MINIMAL_BUILD_FILE_CONFIG)
-                .fregeSourceFiles(() -> Stream.of(COMPLETION_FR))
-                .build();
+            .builder()
+            .projectRoot(testProjectDir)
+            .buildFile(MINIMAL_BUILD_FILE_CONFIG)
+            .fregeSourceFiles(() -> Stream.of(COMPLETION_FR))
+            .build();
             
             BuildResult result = runGradleTask(testProjectDir, COMPILE_FREGE_TASK_NAME);
 
-            assertTrue(
+            assertTrue
+            (
                 project
                 .getTasks()
                 .getByName(COMPILE_FREGE_TASK_NAME) 
                 instanceof CompileFregeTask
             );
-            assertEquals(
+            assertEquals
+            (
                 SUCCESS,
                 result.task(":" + COMPILE_FREGE_TASK_NAME).getOutcome()
             );
-            assertFileExists(
+            assertFileExists
+            (
                 testProjectDir,
                 "build/classes/main/frege/ch/fhnw/thga/Completion.java"
             );
-            assertFileExists(
+            assertFileExists
+            (
                 testProjectDir,
                 "build/classes/main/frege/ch/fhnw/thga/Completion.class"
             );
         }
 
         @Test
-        void given_frege_code_and_many_compiler_flags(
-            @TempDir File testProjectDir)
+        void given_frege_code_and_many_compiler_flags(@TempDir File testProjectDir)
             throws Exception
         {
-            String buildConfigWithCompilerFlags = createFregeSection(
+            String buildConfigWithCompilerFlags = createFregeSection
+            (
                 FregeDTOBuilder
-                .builder()
-                .version("'3.25.84'")
-                .release("'3.25alpha'")
+                .latestVersionBuilder()
                 .compilerFlags("['-v', '-make', '-O', '-hints']")
                 .build()
             );
             Project project = FregeProjectBuilder
-                .builder()
-                .projectRoot(testProjectDir)
-                .buildFile(buildConfigWithCompilerFlags)
-                .fregeSourceFiles(() -> Stream.of(COMPLETION_FR))
-                .build();
+            .builder()
+            .projectRoot(testProjectDir)
+            .buildFile(buildConfigWithCompilerFlags)
+            .fregeSourceFiles(() -> Stream.of(COMPLETION_FR))
+            .build();
             
             BuildResult result = runGradleTask(testProjectDir, COMPILE_FREGE_TASK_NAME);
 
-            assertTrue(
+            assertTrue
+            (
                 project
                 .getTasks()
                 .getByName(COMPILE_FREGE_TASK_NAME) 
                 instanceof CompileFregeTask
             );
-            assertEquals(
+            assertEquals
+            (
                 SUCCESS,
                 result.task(":" + COMPILE_FREGE_TASK_NAME).getOutcome()
             );
-            assertFileExists(
+            assertFileExists
+            (
                 testProjectDir,
                 "build/classes/main/frege/ch/fhnw/thga/Completion.java"
             );
-            assertFileExists(
+            assertFileExists
+            (
                 testProjectDir,
                 "build/classes/main/frege/ch/fhnw/thga/Completion.class"
             );
         }
 
         @Test
-        void given_frege_code_in_custom_source_and_output_dir_and_minimal_build_file_config(
-            @TempDir File testProjectDir)
+        void given_frege_code_in_custom_source_and_output_dir_and_minimal_build_file_config
+            (@TempDir File testProjectDir)
             throws Exception
         {
-            String customSourceAndOutputBuildFileConfig = createFregeSection(
+            String customSourceAndOutputBuildFileConfig = createFregeSection
+            (
                 FregeDTOBuilder
-                .builder()
-                .version("'3.25.84'")
-                .release("'3.25alpha'")
+                .latestVersionBuilder()
                 .mainSourceDir("layout.projectDirectory.dir('src/frege')")
                 .outputDir("layout.buildDirectory.dir('frege')")
                 .build()
             );
             Project project = FregeProjectBuilder
-                .builder()
-                .projectRoot(testProjectDir)
-                .buildFile(customSourceAndOutputBuildFileConfig)
-                .fregeSourceFiles(() -> Stream.of(new FregeSourceFile(
-                    "src/frege/ch/fhnw/thga/Completion.fr",
-                    COMPLETION_FR.getFregeSourceCode())))
-                .build();
+            .builder()
+            .projectRoot(testProjectDir)
+            .buildFile(customSourceAndOutputBuildFileConfig)
+            .fregeSourceFiles
+            (
+                () -> 
+                Stream.of
+                (
+                    new FregeSourceFile
+                    (
+                        "src/frege/ch/fhnw/thga/Completion.fr",
+                        COMPLETION_FR.getFregeSourceCode()
+                    )
+                )
+            )
+            .build();
 
             BuildResult result = runGradleTask(testProjectDir, COMPILE_FREGE_TASK_NAME);
-            assertTrue(
+            assertTrue
+            (
                 project
                 .getTasks()
                 .getByName(COMPILE_FREGE_TASK_NAME)
                 instanceof CompileFregeTask
             );
-            assertEquals(
+            assertEquals
+            (
                 SUCCESS,
                 result.task(":" + COMPILE_FREGE_TASK_NAME).getOutcome()
             );
-            assertFileExists(
+            assertFileExists
+            (
                 testProjectDir,
                 "build/frege/ch/fhnw/thga/Completion.java"
             );
-            assertFileExists(
+            assertFileExists
+            (
                 testProjectDir,
                 "build/frege/ch/fhnw/thga/Completion.class"
             );
         }
 
         @Test
-        void and_is_up_to_date_given_no_code_changes(
-            @TempDir File testProjectDir)
+        void and_is_up_to_date_given_no_code_changes(@TempDir File testProjectDir)
             throws Exception
         {
             FregeProjectBuilder
-                .builder()
-                .projectRoot(testProjectDir)
-                .buildFile(MINIMAL_BUILD_FILE_CONFIG)
-                .fregeSourceFiles(() -> Stream.of(COMPLETION_FR))
-                .build();
+            .builder()
+            .projectRoot(testProjectDir)
+            .buildFile(MINIMAL_BUILD_FILE_CONFIG)
+            .fregeSourceFiles(() -> Stream.of(COMPLETION_FR))
+            .build();
             
             BuildResult first = runGradleTask(testProjectDir, COMPILE_FREGE_TASK_NAME);
             
-            assertEquals(
+            assertEquals
+            (
                 SUCCESS, 
-                first.task(":" + COMPILE_FREGE_TASK_NAME).getOutcome());
+                first.task(":" + COMPILE_FREGE_TASK_NAME).getOutcome()
+            );
 
             BuildResult second = runGradleTask(testProjectDir, COMPILE_FREGE_TASK_NAME);
             
-            assertEquals(
+            assertEquals
+            (
                 UP_TO_DATE,
-                second.task(":" + COMPILE_FREGE_TASK_NAME).getOutcome());
+                second.task(":" + COMPILE_FREGE_TASK_NAME).getOutcome()
+            );
         }
         
         @Test
-        void and_is_cached_given_cache_hit(
-            @TempDir File testProjectDir) 
+        void and_is_cached_given_cache_hit(@TempDir File testProjectDir) 
             throws Exception 
         {
             FregeProjectBuilder
-                .builder()
-                .projectRoot(testProjectDir)
-                .buildFile(MINIMAL_BUILD_FILE_CONFIG)
-                .fregeSourceFiles(() -> Stream.of(COMPLETION_FR))
-                .build();
+            .builder()
+            .projectRoot(testProjectDir)
+            .buildFile(MINIMAL_BUILD_FILE_CONFIG)
+            .fregeSourceFiles(() -> Stream.of(COMPLETION_FR))
+            .build();
 
-            BuildResult first = runGradleTask(
+            BuildResult first = runGradleTask
+            (
                 testProjectDir,
                 COMPILE_FREGE_TASK_NAME,
                 "--build-cache"
             );
             
-            assertEquals(
+            assertEquals
+            (
                 SUCCESS, 
                 first.task(":" + COMPILE_FREGE_TASK_NAME).getOutcome()
             );
 
-            String codeChange = String.join(
+            String codeChange = String.join
+            (
                 NEW_LINE, 
                 "module ch.fhnw.thga.Completion where",
                 NEW_LINE,
@@ -218,48 +240,69 @@ public class CompileFregeTaskFunctionalTest
                 NEW_LINE
             );
             FregeProjectBuilder
-                .builder()
-                .projectRoot(testProjectDir)
-                .buildFile(MINIMAL_BUILD_FILE_CONFIG)
-                .fregeSourceFiles(() -> Stream.of(new FregeSourceFile(
-                    COMPLETION_FR.getFregeModulePath(),
-                    codeChange)))
-                .build();
+            .builder()
+            .projectRoot(testProjectDir)
+            .buildFile(MINIMAL_BUILD_FILE_CONFIG)
+            .fregeSourceFiles
+            (
+                () -> 
+                Stream.of
+                (
+                    new FregeSourceFile
+                    (
+                        COMPLETION_FR.getFregeModulePath(),
+                        codeChange
+                    )
+                )
+            )
+            .build();
 
-            BuildResult second = runGradleTask(
+            BuildResult second = runGradleTask
+            (
                 testProjectDir,
                 COMPILE_FREGE_TASK_NAME,
                 "--build-cache"
             );
             
-            assertEquals(
+            assertEquals
+            (
                 SUCCESS,
                 second.task(":" + COMPILE_FREGE_TASK_NAME).getOutcome()
             );
 
             FregeProjectBuilder
-                .builder()
-                .projectRoot(testProjectDir)
-                .buildFile(MINIMAL_BUILD_FILE_CONFIG)
-                .fregeSourceFiles(() -> Stream.of(COMPLETION_FR))
-                .build();
-            BuildResult third = runGradleTask(
+            .builder()
+            .projectRoot(testProjectDir)
+            .buildFile(MINIMAL_BUILD_FILE_CONFIG)
+            .fregeSourceFiles(() -> Stream.of(COMPLETION_FR))
+            .build();
+            BuildResult third = runGradleTask
+            (
                 testProjectDir,
                 COMPILE_FREGE_TASK_NAME,
                 "--build-cache"
             );
             
-            assertEquals(
+            assertEquals
+            (
                 FROM_CACHE, 
-                third.task(":" + COMPILE_FREGE_TASK_NAME).getOutcome());
+                third.task(":" + COMPILE_FREGE_TASK_NAME).getOutcome()
+            );
         }
         
         @Test
-        void given_two_dependent_frege_files_in_default_source_dir_and_minimal_build_file_config(
-            @TempDir File testProjectDir)
+        void given_two_dependent_frege_files_in_default_source_dir_and_correct_main_module_specified
+            (@TempDir File testProjectDir)
             throws Exception
         {
-            String frobCode = String.join(
+            String buildFileConfigWithMainModule = createFregeSection
+            (
+                FregeDTOBuilder.latestVersionBuilder()
+                .compileItems("['ch.fhnw.thga.Frob']")
+                .build()
+            );
+            String frobCode = String.join
+            (
                 NEW_LINE,
                 "module ch.fhnw.thga.Frob where",
                 NEW_LINE,
@@ -271,47 +314,64 @@ public class CompileFregeTaskFunctionalTest
             );
             
             Project project = FregeProjectBuilder
-                .builder()
-                .projectRoot(testProjectDir)
-                .buildFile(MINIMAL_BUILD_FILE_CONFIG)
-                .fregeSourceFiles(() -> Stream.of(COMPLETION_FR, new FregeSourceFile(
-                    String.format(
-                        "%s/%s",
-                        DEFAULT_RELATIVE_SOURCE_DIR,
-                        "ch/fhnw/thga/Frob.fr"
-                    ),
-                    frobCode)))
-                .build();
-            
-            BuildResult result = runGradleTask(
+            .builder()
+            .projectRoot(testProjectDir)
+            .buildFile(buildFileConfigWithMainModule)
+            .fregeSourceFiles
+            (
+                () -> 
+                Stream.of
+                (
+                    COMPLETION_FR, 
+                    new FregeSourceFile
+                    (
+                        String.format
+                        (
+                            "%s/%s", 
+                            DEFAULT_RELATIVE_SOURCE_DIR,
+                            "ch/fhnw/thga/Frob.fr"
+                        ),
+                        frobCode
+                    )
+                )
+            )
+            .build();
+
+            BuildResult result = runGradleTask
+            (
                 testProjectDir,
-                COMPILE_FREGE_TASK_NAME,
-                "--compileItem=ch.fhnw.thga.Frob"
+                COMPILE_FREGE_TASK_NAME
             );
 
-            assertTrue(
+            assertTrue
+            (
                 project
                 .getTasks()
                 .getByName(COMPILE_FREGE_TASK_NAME) 
                 instanceof CompileFregeTask
             );
-            assertEquals(
+            assertEquals
+            (
                 SUCCESS,
                 result.task(":" + COMPILE_FREGE_TASK_NAME).getOutcome()
             );
-            assertFileExists(
+            assertFileExists
+            (
                 testProjectDir,
                 "build/classes/main/frege/ch/fhnw/thga/Completion.java"
             );
-            assertFileExists(
+            assertFileExists
+            (
                 testProjectDir,
                 "build/classes/main/frege/ch/fhnw/thga/Completion.class"
             );
-            assertFileExists(
+            assertFileExists
+            (
                 testProjectDir,
                 "build/classes/main/frege/ch/fhnw/thga/Frob.java"
             );
-            assertFileExists(
+            assertFileExists
+            (
                 testProjectDir,
                 "build/classes/main/frege/ch/fhnw/thga/Frob.class"
             );
@@ -319,106 +379,126 @@ public class CompileFregeTaskFunctionalTest
     }
 
     @Nested
-    @IndicativeSentencesGeneration(
+    @IndicativeSentencesGeneration
+    (
         separator = " -> ",
         generator = DisplayNameGenerator.ReplaceUnderscores.class
     )
     class Compile_frege_task_fails
     {
         @Test
-        void given_frege_code_and_illegal_compiler_flags(
-            @TempDir File testProjectDir)
+        void given_frege_code_and_illegal_compiler_flags
+            (@TempDir File testProjectDir)
             throws Exception
         {
-            String buildConfigWithIllegalCompilerFlags = createFregeSection(
+            String buildConfigWithIllegalCompilerFlags = createFregeSection
+            (
                 FregeDTOBuilder
-                .builder()
-                .version("'3.25.84'")
-                .release("'3.25alpha'")
+                .latestVersionBuilder()
                 .compilerFlags("['-make', '-bla']")
                 .build()
             );
             Project project = FregeProjectBuilder
-                .builder()
-                .projectRoot(testProjectDir)
-                .buildFile(buildConfigWithIllegalCompilerFlags)
-                .fregeSourceFiles(() -> Stream.of(COMPLETION_FR))
-                .build();
+            .builder()
+            .projectRoot(testProjectDir)
+            .buildFile(buildConfigWithIllegalCompilerFlags)
+            .fregeSourceFiles(() -> Stream.of(COMPLETION_FR))
+            .build();
 
-            BuildResult result = runAndFailGradleTask(testProjectDir, COMPILE_FREGE_TASK_NAME);
+            BuildResult result = runAndFailGradleTask
+            (
+                testProjectDir, 
+                COMPILE_FREGE_TASK_NAME
+            );
 
-            assertTrue(
+            assertTrue
+            (
                 project
                 .getTasks()
                 .getByName(COMPILE_FREGE_TASK_NAME)
                 instanceof CompileFregeTask
             );
-            assertEquals(
+            assertEquals
+            (
                 FAILED, 
                 result.task(":" + COMPILE_FREGE_TASK_NAME).getOutcome()
             );
         }
         
         @Test
-        void given_two_dependent_frege_files_in_default_source_dir_and_without_make_compiler_flag(
-            @TempDir File testProjectDir)
+        void given_two_dependent_frege_files_in_default_source_dir_and_without_make_compiler_flag
+            (@TempDir File testProjectDir)
             throws Exception
         {
-            String frobCode = String.join(
-            NEW_LINE,
-            "module ch.fhnw.thga.Frob where",
-            NEW_LINE,
-            NEW_LINE,
-            "import ch.fhnw.thga.Completion (complete)",
-            NEW_LINE,
-            "frob i = complete $ i + i",
-            NEW_LINE
+            String frobCode = String.join
+            (
+                NEW_LINE,
+                "module ch.fhnw.thga.Frob where",
+                NEW_LINE,
+                NEW_LINE,
+                "import ch.fhnw.thga.Completion (complete)",
+                NEW_LINE,
+                "frob i = complete $ i + i",
+                NEW_LINE
             );
-            String minimalBuildFileConfigWithoutMake = createFregeSection(
-                FregeDTOBuilder
-                .builder()
-                .version("'3.25.84'")
-                .release("'3.25alpha'")
+            String minimalBuildFileConfigWithoutMake = createFregeSection
+            (
+                FregeDTOBuilder.latestVersionBuilder()
                 .compilerFlags("['-v']")
+                .compileItems("['ch.fhnw.thga.Frob']")
                 .build()
             );
             Project project = FregeProjectBuilder
-                .builder()
-                .projectRoot(testProjectDir)
-                .buildFile(minimalBuildFileConfigWithoutMake)
-                .fregeSourceFiles(() -> Stream.of(COMPLETION_FR, new FregeSourceFile(
-                    String.format(
-                        "%s/%s",
-                        DEFAULT_RELATIVE_SOURCE_DIR,
-                        "ch/fhnw/thga/Frob.fr"
-                    ),
-                    frobCode)))
-                .build();
+            .builder()
+            .projectRoot(testProjectDir)
+            .buildFile(minimalBuildFileConfigWithoutMake)
+            .fregeSourceFiles
+            (
+                () -> 
+                Stream.of
+                (
+                    COMPLETION_FR, 
+                    new FregeSourceFile
+                    (
+                        String.format
+                        (
+                            "%s/%s",
+                            DEFAULT_RELATIVE_SOURCE_DIR,
+                            "ch/fhnw/thga/Frob.fr"
+                        ),
+                        frobCode
+                    )
+                )
+            )
+            .build();
             
-            BuildResult result = runAndFailGradleTask(
+            BuildResult result = runAndFailGradleTask
+            (
                 testProjectDir,
-                COMPILE_FREGE_TASK_NAME,
-                "--compileItem=ch.fhnw.thga.Frob"
+                COMPILE_FREGE_TASK_NAME
             );
 
-            assertTrue(
+            assertTrue
+            (
                 project
                 .getTasks()
                 .getByName(COMPILE_FREGE_TASK_NAME) 
                 instanceof CompileFregeTask
             );
-            assertEquals(
+            assertEquals
+            (
                 FAILED, 
                 result.task(":" + COMPILE_FREGE_TASK_NAME).getOutcome()
             );
         }
 
         @Test
-        void given_wrong_main_source_dir_when_searching_for_dependent_frege_module(
-            @TempDir File testProjectDir)
+        void given_wrong_main_source_dir_when_searching_for_dependent_frege_module
+            (@TempDir File testProjectDir)
             throws Exception
         {
-            String codeImportingDependentModule = String.join(
+            String codeImportingDependentModule = String.join
+            (
                 NEW_LINE,
                 "module ch.fhnw.thga.Frob where",
                 NEW_LINE,
@@ -429,41 +509,54 @@ public class CompileFregeTaskFunctionalTest
                 NEW_LINE
             );
 
-            String wrongMainSourceDirBuildFileConfig = createFregeSection(
+            String wrongMainSourceDirBuildFileConfig = createFregeSection
+            (
                 FregeDTOBuilder
-                .builder()
-                .version("'3.25.84'")
-                .release("'3.25alpha'")
+                .latestVersionBuilder()
                 .mainSourceDir("layout.projectDirectory")
+                .compileItems("['ch.fhnw.thga.Frob']")
                 .build()
             );
-            
+
             Project project = FregeProjectBuilder
-                .builder()
-                .projectRoot(testProjectDir)
-                .buildFile(wrongMainSourceDirBuildFileConfig)
-                .fregeSourceFiles(() -> Stream.of(COMPLETION_FR, new FregeSourceFile(
-                    String.format(
-                        "%s/%s",
-                        DEFAULT_RELATIVE_SOURCE_DIR,
-                        "ch/fhnw/thga/Frob.fr"
-                    ),
-                    codeImportingDependentModule)))
-                .build();
-            
-            BuildResult result = runAndFailGradleTask(
+            .builder()
+            .projectRoot(testProjectDir)
+            .buildFile(wrongMainSourceDirBuildFileConfig)
+            .fregeSourceFiles
+            (
+                () -> 
+                Stream.of
+                (
+                    COMPLETION_FR, 
+                    new FregeSourceFile
+                    (
+                        String.format
+                        (
+                            "%s/%s",
+                            DEFAULT_RELATIVE_SOURCE_DIR,
+                            "ch/fhnw/thga/Frob.fr"
+                        ),
+                        codeImportingDependentModule
+                    )
+                )
+            )
+            .build();
+
+            BuildResult result = runAndFailGradleTask
+            (
                 testProjectDir,
-                COMPILE_FREGE_TASK_NAME,
-                "--compileItem=ch.fhnw.thga.Frob"
+                COMPILE_FREGE_TASK_NAME
             );
 
-            assertTrue(
+            assertTrue
+            (
                 project
                 .getTasks()
                 .getByName(COMPILE_FREGE_TASK_NAME) 
                 instanceof CompileFregeTask
             );
-            assertEquals(
+            assertEquals
+            (
                 FAILED,
                 result.task(":" + COMPILE_FREGE_TASK_NAME).getOutcome()
             );
