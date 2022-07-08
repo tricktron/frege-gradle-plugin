@@ -11,6 +11,7 @@ public final class FregeDTOBuilder implements Builder
     private String compilerFlags       = "";
     private String replModule          = "";
     private String compileItems        = "";
+    private String testModules         = "";
 
     private FregeDTOBuilder() {}
 
@@ -90,6 +91,13 @@ public final class FregeDTOBuilder implements Builder
         return this;
     }
 
+    @Override
+    public Builder testModules(String testModules)
+    {
+        this.testModules = testModules;
+        return this;
+    }
+
     public FregeDTO build() 
     {
         return new FregeDTO
@@ -102,7 +110,8 @@ public final class FregeDTOBuilder implements Builder
             mainModule,
             compilerFlags,
             replModule,
-            compileItems
+            compileItems,
+            testModules
         );
     }
 }

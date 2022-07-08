@@ -116,12 +116,12 @@ public class FregePlugin implements Plugin<Project>
             TestFregeTask.class,
             task ->
             {
-                task.getMainModule().set(extension.getMainModule());
+                task.getTestModules().set(extension.getTestModules());
                 task.dependsOn(compileFregeTask.map
                 (
                     compileTask ->
                     {
-                        compileTask.getFregeCompileItems().add(task.getMainModule());
+                        compileTask.getFregeCompileItems().set(task.getTestModules());
                         return compileTask;
                     }
                 ).get());
