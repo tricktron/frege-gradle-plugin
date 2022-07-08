@@ -2,6 +2,7 @@ package ch.fhnw.thga.gradleplugins;
 
 import static ch.fhnw.thga.gradleplugins.FregeExtension.DEFAULT_RELATIVE_SOURCE_DIR;
 import static ch.fhnw.thga.gradleplugins.FregePlugin.REPL_FREGE_TASK_NAME;
+import static ch.fhnw.thga.gradleplugins.FregePlugin.COMPILE_FREGE_TASK_NAME;
 import static ch.fhnw.thga.gradleplugins.SharedFunctionalTestLogic.COMPLETION_FR;
 import static ch.fhnw.thga.gradleplugins.SharedFunctionalTestLogic.MINIMAL_BUILD_FILE_CONFIG;
 import static ch.fhnw.thga.gradleplugins.SharedTaskLogic.NEW_LINE;
@@ -166,17 +167,23 @@ public class ReplFregeTaskFunctionalTest
                 .fregeSourceFiles(() -> Stream.of(COMPLETION_FR))
                 .build();
                                                                                          
-            BuildResult result = runAndFailGradleTask(testProjectDir, REPL_FREGE_TASK_NAME);
+            BuildResult result = runAndFailGradleTask
+            (
+                testProjectDir, 
+                REPL_FREGE_TASK_NAME
+            );
 
-            assertTrue(
+            assertTrue
+            (
                 project
                 .getTasks()
                 .getByName(REPL_FREGE_TASK_NAME)
                 instanceof ReplFregeTask
             );
-            assertEquals(
+            assertEquals
+            (
                 FAILED,
-                result.task(":" + REPL_FREGE_TASK_NAME).getOutcome()
+                result.task(":" + COMPILE_FREGE_TASK_NAME).getOutcome()
             );
         }
     }
