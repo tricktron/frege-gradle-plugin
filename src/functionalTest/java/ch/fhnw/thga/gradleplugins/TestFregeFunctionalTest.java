@@ -28,13 +28,16 @@ import ch.fhnw.thga.gradleplugins.fregeproject.FregeSourceFile;
 
 public class TestFregeFunctionalTest
 {
-    private static final FregeSourceFile PROPERTY_TESTS_FR = new FregeSourceFile(
-        String.format(
+    private static final FregeSourceFile PROPERTY_TESTS_FR = new FregeSourceFile
+    (
+        String.format
+        (
             "%s/%s",
             DEFAULT_RELATIVE_SOURCE_DIR,
             "ch/fhnw/thga/PropertyTests.fr"
         ),
-        String.join(NEW_LINE,
+        String.join
+        (NEW_LINE,
             "module ch.fhnw.thga.PropertyTests where",
             EMPTY_LINE,
             "import Test.QuickCheck",
@@ -45,95 +48,182 @@ public class TestFregeFunctionalTest
     );
 
     @Nested
-    @IndicativeSentencesGeneration(
+    @IndicativeSentencesGeneration
+    (
         separator = " -> ",
         generator = DisplayNameGenerator.ReplaceUnderscores.class
     )
     class Test_frege_task_works
     {
         @Test
-        void given_frege_code_with_true_quick_check_property(
-            @TempDir File testProjectDir)
+        void given_single_frege_module_with_true_quick_check_property
+            (@TempDir File testProjectDir)
             throws Exception 
         {
-            String mainBuildConfig = createFregeSection(
+            String mainBuildConfig = createFregeSection
+            (
                 FregeDTOBuilder
-                .builder()
-                .version("'3.25.84'")
-                .release("'3.25alpha'")
-                .mainModule("'ch.fhnw.thga.PropertyTests'")
+                .latestVersionBuilder()
+                .testModules("['ch.fhnw.thga.PropertyTests']")
                 .build()
             );
 
             Project project = FregeProjectBuilder
-                .builder()
-                .projectRoot(testProjectDir)
-                .buildFile(mainBuildConfig)
-                .fregeSourceFiles(() -> Stream.of(PROPERTY_TESTS_FR))
-                .build();
+            .builder()
+            .projectRoot(testProjectDir)
+            .buildFile(mainBuildConfig)
+            .fregeSourceFiles(() -> Stream.of(PROPERTY_TESTS_FR))
+            .build();
             
-            BuildResult result = runGradleTask(
+            BuildResult result = runGradleTask
+            (
                 testProjectDir,
                 TEST_FREGE_TASK_NAME,
                 "--args=-v -p p_pass"
             );
             
-            assertTrue(
+            assertTrue
+            (
                 project
                 .getTasks()
                 .getByName(TEST_FREGE_TASK_NAME) 
                 instanceof TestFregeTask
             );
-            assertEquals(
+            assertEquals
+            (
                 SUCCESS,
                 result.task(":" + TEST_FREGE_TASK_NAME).getOutcome()
             );
             assertTrue(result.getOutput().contains("OK"));
             assertTrue(result.getOutput().contains("Properties passed: 1, failed: 0"));
         }
+
+        @Test
+        void given_multiple_frege_modules_with_true_quick_check_properties
+            (@TempDir File testProjectDir)
+            throws Exception 
+        {
+            FregeSourceFile PROPERTY_TESTS1_FR = new FregeSourceFile
+            (
+                String.format
+                (
+                    "%s/%s",
+                    DEFAULT_RELATIVE_SOURCE_DIR,
+                    "ch/fhnw/thga/PropertyTests1.fr"
+                ),
+                String.join
+                (
+                    NEW_LINE,
+                    "module ch.fhnw.thga.PropertyTests1 where",
+                    EMPTY_LINE,
+                    "import Test.QuickCheck",
+                    EMPTY_LINE,
+                    "p_pass1 = property $ \\(n::Integer) -> odd n ^^ even n"
+                )
+            );
+
+            FregeSourceFile PROPERTY_TESTS2_FR = new FregeSourceFile
+            (
+                String.format
+                (
+                    "%s/%s",
+                    DEFAULT_RELATIVE_SOURCE_DIR,
+                    "ch/fhnw/thga/PropertyTests2.fr"
+                ),
+                String.join
+                (
+                    NEW_LINE,
+                    "module ch.fhnw.thga.PropertyTests2 where",
+                    EMPTY_LINE,
+                    "import Test.QuickCheck",
+                    EMPTY_LINE,
+                    "f   = reverse",
+                    "g x = show x ++ show x ++ show x",
+                    "p_commutativity = property $ \\(xs :: [Int]) -> ( map g (f xs) == f (map g xs) )"
+                )
+            );
+            String mainBuildConfig = createFregeSection
+            (
+                FregeDTOBuilder
+                .latestVersionBuilder()
+                .testModules("['ch.fhnw.thga.PropertyTests1', 'ch.fhnw.thga.PropertyTests2']")
+                .build()
+            );
+
+            Project project = FregeProjectBuilder
+            .builder()
+            .projectRoot(testProjectDir)
+            .buildFile(mainBuildConfig)
+            .fregeSourceFiles(() -> Stream.of(PROPERTY_TESTS1_FR, PROPERTY_TESTS2_FR))
+            .build();
+            
+            BuildResult result = runGradleTask
+            (
+                testProjectDir,
+                TEST_FREGE_TASK_NAME
+            );
+            
+            assertTrue
+            (
+                project
+                .getTasks()
+                .getByName(TEST_FREGE_TASK_NAME) 
+                instanceof TestFregeTask
+            );
+            assertEquals
+            (
+                SUCCESS,
+                result.task(":" + TEST_FREGE_TASK_NAME).getOutcome()
+            );
+            assertTrue(result.getOutput().contains("OK"));
+            assertTrue(result.getOutput().contains("Properties passed: 2, failed: 0"));
+        }
     }
 
     @Nested
-    @IndicativeSentencesGeneration(
+    @IndicativeSentencesGeneration
+    (
         separator = " -> ",
         generator = DisplayNameGenerator.ReplaceUnderscores.class
     )
     class Test_frege_task_fails
     {
         @Test
-        void given_frege_code_with_false_quick_check_property(
-            @TempDir File testProjectDir)
+        void given_single_frege_code_with_false_quick_check_property
+            (@TempDir File testProjectDir)
             throws Exception 
         {
-            String mainBuildConfig = createFregeSection(
+            String mainBuildConfig = createFregeSection
+            (
                 FregeDTOBuilder
-                .builder()
-                .version("'3.25.84'")
-                .release("'3.25alpha'")
-                .mainModule("'ch.fhnw.thga.PropertyTests'")
+                .latestVersionBuilder()
+                .testModules("['ch.fhnw.thga.PropertyTests']")
                 .build()
             );
 
             Project project = FregeProjectBuilder
-                .builder()
-                .projectRoot(testProjectDir)
-                .buildFile(mainBuildConfig)
-                .fregeSourceFiles(() -> Stream.of(PROPERTY_TESTS_FR))
-                .build();
+            .builder()
+            .projectRoot(testProjectDir)
+            .buildFile(mainBuildConfig)
+            .fregeSourceFiles(() -> Stream.of(PROPERTY_TESTS_FR))
+            .build();
             
-            BuildResult result = runAndFailGradleTask(
+            BuildResult result = runAndFailGradleTask
+            (
                 testProjectDir,
                 TEST_FREGE_TASK_NAME,
                 "--args=-v -p p_fail"
             );
             
-            assertTrue(
+            assertTrue
+            (
                 project
                 .getTasks()
                 .getByName(TEST_FREGE_TASK_NAME) 
                 instanceof TestFregeTask
             );
-            assertEquals(
+            assertEquals
+            (
                 FAILED,
                 result.task(":" + TEST_FREGE_TASK_NAME).getOutcome()
             );

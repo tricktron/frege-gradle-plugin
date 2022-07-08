@@ -17,6 +17,7 @@ public class FregeDTO
     public final String compilerFlags;
     public final String replModule;
     public final String compileItems;
+    public final String testModules;
 
     public FregeDTO
         (
@@ -28,7 +29,8 @@ public class FregeDTO
             String mainModule,
             String compilerFlags,
             String replModule,
-            String compileItems
+            String compileItems,
+            String testModules
         ) 
     {
         this.version             = version;
@@ -40,6 +42,7 @@ public class FregeDTO
         this.compilerFlags       = compilerFlags;
         this.replModule          = replModule;
         this.compileItems        = compileItems;
+        this.testModules         = testModules;
     }
 
     public String getVersion() 

@@ -6,6 +6,7 @@ import org.gradle.api.DefaultTask;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.model.ObjectFactory;
+import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputDirectory;
@@ -16,7 +17,8 @@ import org.gradle.api.tasks.options.Option;
 import org.gradle.api.tasks.Internal;
 import org.gradle.api.provider.Provider;
 
-public abstract class TestFregeTask extends DefaultTask {
+public abstract class TestFregeTask extends DefaultTask
+{
     private static final String TEST_MAIN_CLASS = "frege.tools.Quick";
     private final JavaExec javaExec;
 
@@ -27,21 +29,29 @@ public abstract class TestFregeTask extends DefaultTask {
     public abstract DirectoryProperty getFregeOutputDir();
 
     @Input
-    @Option(option = "mainModule",
-           description = "The full name of the Frege module with a main function, e.g. 'my.mod.Name'")
-    public abstract Property<String> getMainModule();
+    public abstract ListProperty<String> getTestModules();
 
     @Input
     @Option(option = "args",
            description = "optional args passed to frege")
     public abstract Property<String> getFregeArgs();
 
-   @Internal
-   final Provider<String> getAllArgs()
-   {
-       return getFregeArgs()
-        .map(args -> String.format("%s %s", args, getMainModule().get()));
-   } 
+    @Internal
+    final Provider<String> getTestModulesToString()
+    {
+        return getTestModules().map(testModules -> String.join(" ", testModules));
+    }
+
+    @Internal
+    final Provider<String> getAllArgs()
+    {
+        return getFregeArgs()
+        .zip
+        (
+            getTestModulesToString(),
+            (args, testModules) -> String.format("%s %s", args, testModules)
+        );
+    } 
 
     @Input
     public abstract Property<String> getFregeDependencies();

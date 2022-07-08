@@ -17,6 +17,7 @@ public abstract class FregeExtension
     public static final String DEFAULT_RELATIVE_SOURCE_DIR              = "src/main/frege";
     public static final List<String> DEFAULT_COMPILER_FLAGS             = List.of("-O", "-make");
     public static final List<String> DEFAULT_COMPILE_ITEMS              = Collections.emptyList();
+    public static final List<String> DEFAULT_TEST_MODULES               = Collections.emptyList();
 
     public abstract Property<String> getVersion();
 
@@ -35,6 +36,8 @@ public abstract class FregeExtension
     public abstract Property<String> getReplModule();
 
     public abstract ListProperty<String> getCompileItems();
+    
+    public abstract ListProperty<String> getTestModules();
 
     @Inject
     public FregeExtension(ProjectLayout projectLayout)
@@ -51,5 +54,7 @@ public abstract class FregeExtension
         getCompilerFlags().convention(DEFAULT_COMPILER_FLAGS);
 
         getCompileItems().convention(DEFAULT_COMPILE_ITEMS);
+        
+        getTestModules().convention(DEFAULT_TEST_MODULES);
     }
 }
