@@ -20,7 +20,7 @@ file in your `build.gradle`:
 ```groovy
 plugins
 {
-    id 'ch.fhnw.thga.frege' version '1.9.0-alpha'
+    id 'ch.fhnw.thga.frege' version '3.0.0-alpha'
 }
 
 frege 
@@ -42,9 +42,10 @@ See the [Frege Releases](https://github.com/Frege/frege/releases) for all availa
 
 Optional configuration parameters inside `build.gradle`:
 - compilerDownloadDir: defaults to `<projectRoot>/lib`
-- mainSourceDir: defaults to `<projectRoot>/src/main/frege`
-- outputDir: defaults to `<projectRoot>/build/classes/main/frege`
-- compilerFlags: defaults to `['-O', '-make']`
+- mainSourceDir      : defaults to `<projectRoot>/src/main/frege`
+- outputDir          : defaults to `<projectRoot>/build/classes/main/frege`
+- compilerFlags      : defaults to `['-O', '-make']`
+- compileItems       : defaults to `[]`
 
 ### Added Tasks
 
@@ -53,9 +54,9 @@ Optional configuration parameters inside `build.gradle`:
  `mainSourceDir/examples/HelloFrege.fr`. Alternatively, you can specify the location
  on the command line with `--mainModule=my.mod.HelloFrege`.
 - **compileFrege**: Compiles all your `*.fr` files in `mainSourceDir` to `outputDir`.
-Alternatively, you can also pass the compile item by command line. Then only the
-compile item and its dependencies get compiled. 
-E.g.: `gradle compileFrege --compileItem=[full module name | absolute path to .fr file]`.
+Alternatively, you can also specify the compile items by with the `compileItems` property.
+Then only the specified compile items and its dependencies get compiled. 
+E.g.: `compileItems = [ 'my.mod.Mod1', my.mod.Mod2' ]`.
 - **runFrege**: Runs the Frege module specified by `mainModule`. Alternatively you can
 also pass the main module by command line, e.g: `gradle runFrege --mainModule=my.mod.Name`.
 - **testFrege**: Tests all QuickCheck properties defined in the specified `mainModule`.
@@ -71,7 +72,7 @@ On Unix you can even further automate starting the repl and loading the module
 ### Dependencies
 
 Dependencies can be configured as expected in your `build.gradle` file, using the
-`implementation` scope, e.g.:
+`frege` scope, e.g.:
 
 ```groovy
 repositories {
@@ -79,7 +80,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.frege-lang:fregefx:0.8.2-SNAPSHOT'
+    frege 'org.frege-lang:fregefx:0.8.2-SNAPSHOT'
 }
 ```
 
@@ -90,4 +91,6 @@ cache by setting `org.gradle.caching=true` in your `gradle.properites`.
 
 
 ## How to Contribute
-Try to add another task, e.g. `docFrege` to the [FregePluginFunctionalTest.java](src/functionalTest/java/ch/fhnw/thga/gradleplugins/FregePluginFunctionalTest.java) file and try to make the test pass.
+Try to add another task, e.g. `docFrege` to the 
+[FregePluginFunctionalTest.java](src/functionalTest/java/ch/fhnw/thga/gradleplugins/FregePluginFunctionalTest.java)
+file and try to make the test pass.
