@@ -117,17 +117,18 @@ public class FregePlugin implements Plugin<Project>
             task ->
             {
                 task.getTestModules().set(extension.getTestModules());
+                task.getFregeOutputDir().set(extension.getTestOutputDir());
                 task.dependsOn(compileFregeTask.map
                 (
                     compileTask ->
                     {
                         compileTask.getFregeCompileItems().set(task.getTestModules());
+                        compileTask.getFregeOutputDir().set(task.getFregeOutputDir());
                         return compileTask;
                     }
                 ).get());
                 task.getFregeCompilerJar()
                     .set(setupFregeCompilerTask.get().getFregeCompilerOutputPath());
-                task.getFregeOutputDir().set(extension.getOutputDir());
                 task.getFregeDependencies().set(fregeConfiguration.get().getAsPath());
                 task.getFregeArgs().set(FREGE_TEST_DEFAULT_ARGS);
             }

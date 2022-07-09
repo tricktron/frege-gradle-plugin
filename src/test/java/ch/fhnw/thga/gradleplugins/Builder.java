@@ -11,6 +11,8 @@ public interface Builder
     Builder mainSourceDir(String mainSourceDir);
 
     Builder outputDir(String outputDir);
+    
+    Builder testOutputDir(String testOutputDir);
 
     Builder mainModule(String mainModule);
 
