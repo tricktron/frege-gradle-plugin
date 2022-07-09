@@ -20,7 +20,7 @@ file in your `build.gradle`:
 ```groovy
 plugins
 {
-    id 'ch.fhnw.thga.frege' version '4.0.1-alpha'
+    id 'ch.fhnw.thga.frege' version '4.1.0-alpha'
 }
 
 frege 
@@ -43,7 +43,8 @@ See the [Frege Releases](https://github.com/Frege/frege/releases) for all availa
 Optional configuration parameters inside `build.gradle`:
 - compilerDownloadDir: defaults to `<projectRoot>/lib`
 - mainSourceDir      : defaults to `<projectRoot>/src/main/frege`
-- outputDir          : defaults to `<projectRoot>/build/classes/main/frege`
+- outputDir          : defaults to `<projectRoot>/build/classes/frege/main`
+- testOutputDir      : defaults to `<projectRoot>/build/classes/frege/test`
 - compilerFlags      : defaults to `['-O', '-make']`
 - compileItems       : defaults to `[]`
 - testModules        : defaults to `[]`
@@ -58,6 +59,8 @@ Optional configuration parameters inside `build.gradle`:
 Alternatively, you can also specify the compile items by with the `compileItems` property.
 Then only the specified compile items and its dependencies get compiled. 
 E.g.: `compileItems = [ 'my.mod.Mod1', my.mod.Mod2' ]`.
+- **compileTestFrege**: Same as compileFrege but compiles all your `*.fr` files 
+in `mainSourceDir` to `testOutputDir`. Used by the testFrege task.
 - **runFrege**: Runs the Frege module specified by `mainModule`. Alternatively you can
 also pass the main module by command line, e.g: `gradle runFrege --mainModule=my.mod.Name`.
 - **testFrege**: Tests all QuickCheck properties defined in the specified `testModules`.
