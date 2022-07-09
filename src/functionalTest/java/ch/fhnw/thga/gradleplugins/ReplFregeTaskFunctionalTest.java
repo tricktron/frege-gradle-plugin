@@ -154,22 +154,22 @@ public class ReplFregeTaskFunctionalTest
             assertFileExists
             (
                 testProjectDir,
-                "build/classes/main/frege/ch/fhnw/thga/Completion.java"
+                "build/classes/frege/main/ch/fhnw/thga/Completion.java"
             );
             assertFileExists
             (
                 testProjectDir,
-                "build/classes/main/frege/ch/fhnw/thga/Completion.class"
+                "build/classes/frege/main/ch/fhnw/thga/Completion.class"
             );
             assertFileDoesNotExist
             (
                 testProjectDir,
-                "build/classes/main/frege/ch/fhnw/thga/Frob.java"
+                "build/classes/frege/main/ch/fhnw/thga/Frob.java"
             );
             assertFileDoesNotExist
             (
                 testProjectDir,
-                "build/classes/main/frege/ch/fhnw/thga/Frob.class"
+                "build/classes/frege/main/ch/fhnw/thga/Frob.class"
             );
         }
         @Test

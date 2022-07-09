@@ -13,7 +13,7 @@ import org.gradle.api.provider.Property;
 public abstract class FregeExtension
 {
     public static final String DEFAULT_RELATIVE_COMPILER_DOWNLOAD_DIR   = "lib";
-    public static final String DEFAULT_RELATIVE_OUTPUT_DIR              = "classes/main/frege";
+    public static final String DEFAULT_RELATIVE_OUTPUT_DIR              = "classes/frege/main";
     public static final String DEFAULT_RELATIVE_SOURCE_DIR              = "src/main/frege";
     public static final List<String> DEFAULT_COMPILER_FLAGS             = List.of("-O", "-make");
     public static final List<String> DEFAULT_COMPILE_ITEMS              = Collections.emptyList();
