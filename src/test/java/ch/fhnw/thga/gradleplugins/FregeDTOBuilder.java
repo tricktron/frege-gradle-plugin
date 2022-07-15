@@ -7,6 +7,7 @@ public final class FregeDTOBuilder implements Builder
     private String compilerDownloadDir = "";
     private String mainSourceDir       = "";
     private String outputDir           = "";
+    private String testOutputDir       = "";
     private String mainModule          = "";
     private String compilerFlags       = "";
     private String replModule          = "";
@@ -64,6 +65,13 @@ public final class FregeDTOBuilder implements Builder
     }
 
     @Override
+    public Builder testOutputDir(String testOutputDir) 
+    {
+        this.testOutputDir = testOutputDir;
+        return this;
+    }
+
+    @Override
     public Builder mainModule(String mainModule) 
     {
         this.mainModule = mainModule;
@@ -107,6 +115,7 @@ public final class FregeDTOBuilder implements Builder
             compilerDownloadDir,
             mainSourceDir,
             outputDir,
+            testOutputDir,
             mainModule,
             compilerFlags,
             replModule,

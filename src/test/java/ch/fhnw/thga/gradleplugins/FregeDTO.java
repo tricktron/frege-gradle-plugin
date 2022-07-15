@@ -13,6 +13,7 @@ public class FregeDTO
     public final String compilerDownloadDir;
     public final String mainSourceDir;
     public final String outputDir;
+    public final String testOutputDir;
     public final String mainModule;
     public final String compilerFlags;
     public final String replModule;
@@ -26,6 +27,7 @@ public class FregeDTO
             String compilerDownloadDir,
             String mainSourceDir,
             String outputDir,
+            String testOutputDir,
             String mainModule,
             String compilerFlags,
             String replModule,
@@ -38,6 +40,7 @@ public class FregeDTO
         this.compilerDownloadDir = compilerDownloadDir;
         this.mainSourceDir       = mainSourceDir;
         this.outputDir           = outputDir;
+        this.testOutputDir       = testOutputDir;
         this.mainModule          = mainModule;
         this.compilerFlags       = compilerFlags;
         this.replModule          = replModule;
@@ -68,6 +71,11 @@ public class FregeDTO
     public String getOutputDir() 
     {
         return outputDir;
+    }
+
+    public String getTestOutputDir() 
+    {
+        return testOutputDir;
     }
 
     public String getMainModule() 

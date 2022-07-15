@@ -13,7 +13,8 @@ import org.gradle.api.provider.Property;
 public abstract class FregeExtension
 {
     public static final String DEFAULT_RELATIVE_COMPILER_DOWNLOAD_DIR   = "lib";
-    public static final String DEFAULT_RELATIVE_OUTPUT_DIR              = "classes/main/frege";
+    public static final String DEFAULT_RELATIVE_OUTPUT_DIR              = "classes/frege/main";
+    public static final String DEFAULT_RELATIVE_TEST_OUTPUT_DIR         = "classes/frege/test";
     public static final String DEFAULT_RELATIVE_SOURCE_DIR              = "src/main/frege";
     public static final List<String> DEFAULT_COMPILER_FLAGS             = List.of("-O", "-make");
     public static final List<String> DEFAULT_COMPILE_ITEMS              = Collections.emptyList();
@@ -30,6 +31,8 @@ public abstract class FregeExtension
     public abstract DirectoryProperty getMainSourceDir();
 
     public abstract DirectoryProperty getOutputDir();
+    
+    public abstract DirectoryProperty getTestOutputDir();
 
     public abstract ListProperty<String> getCompilerFlags();
 
@@ -50,6 +53,9 @@ public abstract class FregeExtension
 
         getOutputDir()
         .convention(projectLayout.getBuildDirectory().dir(DEFAULT_RELATIVE_OUTPUT_DIR));
+        
+        getTestOutputDir()
+        .convention(projectLayout.getBuildDirectory().dir(DEFAULT_RELATIVE_TEST_OUTPUT_DIR));
 
         getCompilerFlags().convention(DEFAULT_COMPILER_FLAGS);
 

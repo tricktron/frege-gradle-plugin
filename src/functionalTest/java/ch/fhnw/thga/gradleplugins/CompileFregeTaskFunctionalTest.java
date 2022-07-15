@@ -2,13 +2,13 @@ package ch.fhnw.thga.gradleplugins;
 
 import static ch.fhnw.thga.gradleplugins.FregeExtension.DEFAULT_RELATIVE_SOURCE_DIR;
 import static ch.fhnw.thga.gradleplugins.FregePlugin.COMPILE_FREGE_TASK_NAME;
+import static ch.fhnw.thga.gradleplugins.SharedFunctionalTestLogic.COMPLETION_FR;
+import static ch.fhnw.thga.gradleplugins.SharedFunctionalTestLogic.MINIMAL_BUILD_FILE_CONFIG;
+import static ch.fhnw.thga.gradleplugins.SharedFunctionalTestLogic.assertFileExists;
 import static ch.fhnw.thga.gradleplugins.SharedFunctionalTestLogic.createFregeSection;
 import static ch.fhnw.thga.gradleplugins.SharedFunctionalTestLogic.runAndFailGradleTask;
 import static ch.fhnw.thga.gradleplugins.SharedFunctionalTestLogic.runGradleTask;
 import static ch.fhnw.thga.gradleplugins.SharedTaskLogic.NEW_LINE;
-import static ch.fhnw.thga.gradleplugins.SharedFunctionalTestLogic.MINIMAL_BUILD_FILE_CONFIG;
-import static ch.fhnw.thga.gradleplugins.SharedFunctionalTestLogic.COMPLETION_FR;
-import static ch.fhnw.thga.gradleplugins.SharedFunctionalTestLogic.assertFileExists;
 import static org.gradle.testkit.runner.TaskOutcome.FAILED;
 import static org.gradle.testkit.runner.TaskOutcome.FROM_CACHE;
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS;
@@ -67,12 +67,12 @@ public class CompileFregeTaskFunctionalTest
             assertFileExists
             (
                 testProjectDir,
-                "build/classes/main/frege/ch/fhnw/thga/Completion.java"
+                "build/classes/frege/main/ch/fhnw/thga/Completion.java"
             );
             assertFileExists
             (
                 testProjectDir,
-                "build/classes/main/frege/ch/fhnw/thga/Completion.class"
+                "build/classes/frege/main/ch/fhnw/thga/Completion.class"
             );
         }
 
@@ -111,12 +111,12 @@ public class CompileFregeTaskFunctionalTest
             assertFileExists
             (
                 testProjectDir,
-                "build/classes/main/frege/ch/fhnw/thga/Completion.java"
+                "build/classes/frege/main/ch/fhnw/thga/Completion.java"
             );
             assertFileExists
             (
                 testProjectDir,
-                "build/classes/main/frege/ch/fhnw/thga/Completion.class"
+                "build/classes/frege/main/ch/fhnw/thga/Completion.class"
             );
         }
 
@@ -358,22 +358,22 @@ public class CompileFregeTaskFunctionalTest
             assertFileExists
             (
                 testProjectDir,
-                "build/classes/main/frege/ch/fhnw/thga/Completion.java"
+                "build/classes/frege/main/ch/fhnw/thga/Completion.java"
             );
             assertFileExists
             (
                 testProjectDir,
-                "build/classes/main/frege/ch/fhnw/thga/Completion.class"
+                "build/classes/frege/main/ch/fhnw/thga/Completion.class"
             );
             assertFileExists
             (
                 testProjectDir,
-                "build/classes/main/frege/ch/fhnw/thga/Frob.java"
+                "build/classes/frege/main/ch/fhnw/thga/Frob.java"
             );
             assertFileExists
             (
                 testProjectDir,
-                "build/classes/main/frege/ch/fhnw/thga/Frob.class"
+                "build/classes/frege/main/ch/fhnw/thga/Frob.class"
             );
         }
     }

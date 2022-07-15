@@ -12,6 +12,7 @@ public class FregePlugin implements Plugin<Project>
 {
     public static final String SETUP_FREGE_TASK_NAME              = "setupFrege";
     public static final String COMPILE_FREGE_TASK_NAME            = "compileFrege";
+    public static final String COMPILE_TEST_FREGE_TASK_NAME       = "compileTestFrege";
     public static final String RUN_FREGE_TASK_NAME                = "runFrege";
     public static final String TEST_FREGE_TASK_NAME               = "testFrege";
     public static final String REPL_FREGE_TASK_NAME               = "replFrege";
@@ -88,6 +89,24 @@ public class FregePlugin implements Plugin<Project>
             }
         );
 
+        TaskProvider<CompileFregeTask> compileTestFregeTask = 
+        project.getTasks().register
+        (
+            COMPILE_TEST_FREGE_TASK_NAME,
+            CompileFregeTask.class,
+            task ->
+            {
+                task.dependsOn(setupFregeCompilerTask);
+                task.getFregeCompilerJar().set(
+                    setupFregeCompilerTask.get().getFregeCompilerOutputPath());
+                task.getFregeMainSourceDir().set(extension.getMainSourceDir());
+                task.getFregeOutputDir().set(extension.getTestOutputDir());
+                task.getFregeCompilerFlags().set(extension.getCompilerFlags());
+                task.getFregeDependencies().set(fregeConfiguration.get().getAsPath());
+                task.getFregeCompileItems().set(extension.getCompileItems());
+            }
+        );
+
         project.getTasks().register
         (
             RUN_FREGE_TASK_NAME,
@@ -117,17 +136,17 @@ public class FregePlugin implements Plugin<Project>
             task ->
             {
                 task.getTestModules().set(extension.getTestModules());
-                task.dependsOn(compileFregeTask.map
+                task.getFregeOutputDir().set(extension.getTestOutputDir());
+                task.dependsOn(compileTestFregeTask.map
                 (
-                    compileTask ->
+                    compileTestTask ->
                     {
-                        compileTask.getFregeCompileItems().set(task.getTestModules());
-                        return compileTask;
+                        compileTestTask.getFregeCompileItems().set(task.getTestModules());
+                        return compileTestTask;
                     }
                 ).get());
                 task.getFregeCompilerJar()
                     .set(setupFregeCompilerTask.get().getFregeCompilerOutputPath());
-                task.getFregeOutputDir().set(extension.getOutputDir());
                 task.getFregeDependencies().set(fregeConfiguration.get().getAsPath());
                 task.getFregeArgs().set(FREGE_TEST_DEFAULT_ARGS);
             }
