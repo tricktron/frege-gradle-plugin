@@ -1,5 +1,7 @@
 package ch.fhnw.thga.gradleplugins;
 
+import javax.inject.Inject;
+
 import org.gradle.api.NamedDomainObjectProvider;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
@@ -7,6 +9,7 @@ import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.logging.LogLevel;
 import org.gradle.api.plugins.BasePlugin;
 import org.gradle.api.tasks.TaskProvider;
+import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry;
 
 public class FregePlugin implements Plugin<Project>
 {
@@ -24,9 +27,18 @@ public class FregePlugin implements Plugin<Project>
     public static final String FREGE_TEST_MODULE_NAME             = "frege.tools.Quick";
     public static final String FREGE_TEST_DEFAULT_ARGS            = "-v";
 
+    private final ToolingModelBuilderRegistry registry;
+
+    @Inject
+    public FregePlugin(ToolingModelBuilderRegistry registry)
+    {
+        this.registry = registry;
+    }
+
     @Override
     public void apply(Project project)
     {
+        registry.register(new FregeToolingModelBuilder());
         NamedDomainObjectProvider<Configuration> fregeConfiguration = project
         .getConfigurations()
         .register
