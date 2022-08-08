@@ -2,8 +2,7 @@ package ch.fhnw.thga.gradleplugins;
 
 public interface FregeProjectInfo
 {
-    public String getFregeMainSourceDir();
+    public String getMainSourceDir();
 
-    public String getFregeDependenciesClasspath();
-
+    public String getClasspath();
 }

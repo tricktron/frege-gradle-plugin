@@ -5,24 +5,24 @@ import java.io.Serializable;
 public class FregeProjectModel implements Serializable, FregeProjectInfo
 {
 
-    private final String fregeMainSourceDir;
-    private final String fregeDependenciesClasspath;
+    private final String mainSourceDir;
+    private final String classpath;
 
-    public FregeProjectModel(String fregeMainSourceDir, String fregeDependenciesClasspath)
+    public FregeProjectModel(String mainSourceDir, String classpath)
     {
-        this.fregeMainSourceDir = fregeMainSourceDir;
-        this.fregeDependenciesClasspath = fregeDependenciesClasspath;
+        this.mainSourceDir = mainSourceDir;
+        this.classpath     = classpath;
     }
 
     @Override
-    public String getFregeMainSourceDir() {
-        return fregeMainSourceDir;
+    public String getMainSourceDir()
+    {
+        return mainSourceDir;
     }
 
     @Override
-    public String getFregeDependenciesClasspath() {
-        return fregeDependenciesClasspath;
+    public String getClasspath()
+    {
+        return classpath;
     }
-
-
 }
