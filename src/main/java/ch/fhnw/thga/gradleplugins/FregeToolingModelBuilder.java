@@ -26,7 +26,7 @@ public final class FregeToolingModelBuilder implements ToolingModelBuilder
     @Override
     public boolean canBuild(String modelName)
     {
-        return modelName.equals(FregeProjectModel.class.getName());
+        return modelName.equals(FregeProjectInfo.class.getName());
     }
 
 }
