@@ -16,7 +16,7 @@ public final class FregeToolingModelBuilder implements ToolingModelBuilder
     {
         ExtensionContainer extensions = project.getExtensions();
         FregeExtension fregeExtension = extensions.findByType(FregeExtension.class);
-        String fregeMainSourceDir = fregeExtension.getMainSourceDir().getAsFileTree().getAsPath();
+        String fregeMainSourceDir = fregeExtension.getMainSourceDir().get().getAsFile().getAbsolutePath();
         ConfigurationContainer configurations = project.getConfigurations();
         Configuration config = configurations.getByName(FREGE_CONFIGURATION_NAME);
         String fregeClasspath = config.getAsPath();
