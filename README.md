@@ -2,7 +2,11 @@
 
 ![build](https://github.com/tricktron/frege-gradle-plugin/actions/workflows/build.yml/badge.svg)
 
-Simplifies setting up your Frege project.
+Simplifies setting up your Frege project. This container is part of the Frege IDE.
+
+## Documentation
+
+Head over to the [Frege IDE docs](https://tricktron.github.io/frege-lsp-server/frege-ide/1.0/index.html) website.
 
 ## Installation
 
